@@ -1,7 +1,7 @@
 # IDP RL
 ![](https://raw.githubusercontent.com/deepmind/alphafold/main/imgs/header.jpg)
 
-Intrinsically Disordered Proteins using Reinforcement Learning (IDP RL)
+Intrinsically Disordered Proteins using RL (IDP RL)
 ========================================
 [![](https://img.shields.io/badge/docs-master-blue.svg)](https://prob-ml.github.io/bliss/)
 ![tests](https://github.com/prob-ml/bliss/workflows/tests/badge.svg)
