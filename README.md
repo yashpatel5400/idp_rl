@@ -3,8 +3,6 @@
 Intrinsically Disordered Proteins using RL (IDP RL)
 ========================================
 
-# Introduction
-
 IDP RL is a research study for investigating the use of RL to do conformer prediction on intrinsically disordered
 proteins. 
 
