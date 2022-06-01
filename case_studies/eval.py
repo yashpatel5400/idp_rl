@@ -1,3 +1,10 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+import argparse
+import json
+
 import numpy as np
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -66,23 +73,24 @@ def loaded_policy(model, env):
 
 
 if __name__ == '__main__':
-    model = RTGNBatch(6, 128, edge_dim=6, point_dim=5)
+    parser = argparse.ArgumentParser(description='Run batch training')
+    parser.add_argument('--cfg')
+    args = parser.parse_args()
     
-    model.load_state_dict(torch.load('trained_models/tnet_alkane_eval_final.model', map_location=device))
+    with open(args.cfg, "r") as f:
+        config = json.load(f)
 
-    model.to(device)
+    model = RTGNBatch(6, 128, edge_dim=6, point_dim=5)
+    model.load_state_dict(torch.load(config["model_path"], map_location=device))
 
     outputs = []
     times = []
-
     for i in range(10):
         start = time.time()
-        output = loaded_policy(model, 'AlkaneTest11-v0')
+        output = loaded_policy(model, config["env_name"])
         print('output', output)
         end = time.time()
         outputs.append(output)
         times.append(end - start)
     print('outputs', outputs)
-    print(np.array(outputs).mean(), np.array(outputs).std())
     print('times', times)
-    print(np.array(times).mean(), np.array(times).std())
