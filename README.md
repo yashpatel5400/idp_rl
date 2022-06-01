@@ -1,21 +1,60 @@
-# TorsionNet Paper
+# IDP RL
+![](https://raw.githubusercontent.com/deepmind/alphafold/main/imgs/header.jpg)
 
-This repository is the an extension of ["TorsionNet: A Reinforcement Learning Approach to Sequential Conformer Search"](https://arxiv.org/abs/2006.07078) to IDPs
+Intrinsically Disordered Proteins using Reinforcement Learning (IDP RL)
+========================================
+[![](https://img.shields.io/badge/docs-master-blue.svg)](https://prob-ml.github.io/bliss/)
+![tests](https://github.com/prob-ml/bliss/workflows/tests/badge.svg)
+[![codecov.io](https://codecov.io/gh/prob-ml/bliss/branch/master/graphs/badge.svg?branch=master&token=Jgzv0gn3rA)](http://codecov.io/github/prob-ml/bliss?branch=master)
+![case studies](https://github.com/prob-ml/bliss/actions/workflows/case_studies.yml/badge.svg)
 
-Tarun Gogineni, Ziping Xu, Exequiel Punzalan, Runxuan Jiang, Joshua Kammeraad, Ambuj Tewari, and Paul Zimmerman.
+# Introduction
 
-## Installation
+IDP RL is a research study for investigating the use of RL to do conformer prediction on intrinsically disordered
+proteins. 
 
-1. Anaconda should be installed in order to create a Conda environment with the required dependencies. Anaconda can be installed [here](https://www.anaconda.com/products/individual).
+# Installation
 
-2. Dependencies and versions are stored in `environment.yml`. To create a conda environment with the dependencies, run:
-    ```
-    conda env create -f environment.yml
-    ```
+1. To use and install `idp_rl` you first need to install Python. Anaconda is the easiest way:
+```
+wget https://repo.anaconda.com/archive/Anaconda3-2022.05-Linux-x86_64.sh
+bash Anaconda3-2022.05-Linux-x86_64.sh
+```
 
-3. Install PyTorch Geometric. Due to version issues, PyTorch Geometric must be installed manually. You can find instructions for installing it [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html).
+2. For Python dependencies, you then need to install [poetry](https://python-poetry.org/docs/):
+```
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+3. Now download the idp_rl repo:
+```
+git clone https://github.com/yashpatel5400/idp_rl.git
+```
+
+5. To create a poetry environment with the `idp_rl` dependencies satisified, run
+```
+cd idp_rl
+poetry install
+poetry shell
+pip install torch-scatter -f https://data.pyg.org/whl/torch-1.11.0+cu102.html
+pip install torch-sparse -f https://data.pyg.org/whl/torch-1.11.0+cu102.html
+```
+
+6. Verify that bliss is installed correctly by running the tests both on your CPU (default) and on your GPU:
+```
+pytest
+pytest --gpu
+```
+
+# Latest updates
+- The original TorsionNet repo is going through a massive overhaul for IDP RL
 
 
+# References
+
+Tarun Gogineni, Ziping Xu, Exequiel Punzalan, Runxuan Jiang, Joshua Kammeraad, Ambuj Tewari, and Paul Zimmerman. *TorsionNet: A Reinforcement Learning Approach to Sequential Conformer Search* [https://arxiv.org/abs/2006.07078](https://arxiv.org/abs/2006.07078), 2020.
+
+---
 
 ## File Layout
 
