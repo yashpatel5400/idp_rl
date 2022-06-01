@@ -1,3 +1,7 @@
+TorsionNet/huge_hc_set/
+TorsionNet/data/
+TorsionNet/tf_log/
+
 \.DS_STORE
 
 # Byte-compiled / optimized / DLL files
