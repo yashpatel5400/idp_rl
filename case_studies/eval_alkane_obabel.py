@@ -11,7 +11,11 @@ from tempfile import TemporaryDirectory
 import subprocess
 from concurrent.futures import ProcessPoolExecutor
 
-from main.utils import *
+from idp_rl.utils import *
+
+
+random.seed(0)
+np.random.seed(0)
 
 confgen = ConformerGeneratorCustom(max_conformers=1,
                  rmsd_threshold=None,
@@ -25,7 +29,7 @@ def load_from_sdf(sdf_file):
     sdf_mols = [mol for mol in suppl]
     return sdf_mols
 
-def run_lignins_obabel(tup):
+def run_alkanes_obabel(tup):
     smiles, energy_norm, gibbs_norm = tup
     init_dir = os.getcwd()
 
@@ -37,7 +41,7 @@ def run_lignins_obabel(tup):
 
         start = time.time()
         subprocess.check_output('obabel testing.smi -O initial.sdf --gen3d --fast', shell=True)
-        subprocess.check_output('obabel initial.sdf -O confs.sdf --confab --conf 1000 --ecutoff 100000000.0 --rcutoff 0.001', shell=True)
+        subprocess.check_output('obabel initial.sdf -O confs.sdf --confab --conf 200 --ecutoff 100000000.0 --rcutoff 0.001', shell=True)
 
         inp = load_from_sdf('confs.sdf')
         mol = inp[0]
@@ -46,9 +50,9 @@ def run_lignins_obabel(tup):
             mol.AddConformer(c, assignId=True)
 
         res = AllChem.MMFFOptimizeMoleculeConfs(mol)
-        mol = prune_conformers(mol, 0.15)
+        mol = prune_conformers(mol, 0.05)
 
-        energys = (confgen.get_conformer_energies(mol) - energy_norm) * (1/3.97)
+        energys = (confgen.get_conformer_energies(mol) - energy_norm)
         total = np.sum(np.exp(-energys))
         total /= gibbs_norm
         end = time.time()
@@ -60,21 +64,18 @@ if __name__ == '__main__':
     outputs = []
     times = []
 
-    m = Chem.MolFromMolFile('lignin_eval_final_sgld/8_0.mol', removeHs=False)
+    eleven_alkane_args = ( "[H]C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])(C([H])([H])[H])C([H])([H])C([H])([H])C([H])([H])C([H])(C([H])([H])C([H])([H])[H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])[H]", 7.840935037731404,  13.066560104213275)
+    trihexyl_args = ('[H]C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])[C@]([H])(C([H])([H])C([H])([H])[H])C([H])([H])C([H])([H])[C@@]([H])(C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])[H])C([H])([H])C([H])([H])[C@]([H])(C([H])([H])[H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])[H]', 14.88278294332602, 1.2363186365185044)
 
-    smi = Chem.MolToSmiles(m)
-    standard = 525.8597421636731
-    total = 16.154879274306534
-
-    lignin_final_args = (smi, standard, total)
-
-    args_list = [lignin_final_args] * 10
+    args_list = [eleven_alkane_args] * 10
     with ProcessPoolExecutor() as executor:
-        out = executor.map(run_lignins_obabel, args_list)
+        out = executor.map(run_alkanes_obabel, args_list)
 
     for a, b in out:
         outputs.append(a)
         times.append(b)
 
     print('outputs', outputs)
+    print(np.array(outputs).mean(), np.array(outputs).std())
     print('times', times)
+    print(np.array(times).mean(), np.array(times).std())

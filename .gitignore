@@ -1,6 +1,6 @@
-TorsionNet/huge_hc_set/
-TorsionNet/data/
-TorsionNet/tf_log/
+case_studies/huge_hc_set/
+case_studies/data/
+case_studies/tf_log/
 
 \.DS_STORE
 

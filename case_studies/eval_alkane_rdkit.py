@@ -11,7 +11,7 @@ from tempfile import TemporaryDirectory
 import subprocess
 from concurrent.futures import ProcessPoolExecutor
 
-from main.utils import *
+from idp_rl.utils import *
 
 confgen = ConformerGeneratorCustom(max_conformers=1,
                  rmsd_threshold=None,

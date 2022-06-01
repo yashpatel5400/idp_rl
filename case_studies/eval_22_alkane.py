@@ -16,9 +16,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from main.utils import *
-from main.models import *
-from main.environments import Task
+from idp_rl.utils import *
+from idp_rl.models import *
+from idp_rl.environments import Task
 
 random.seed(4)
 np.random.seed(4)
@@ -29,6 +29,7 @@ from concurrent.futures import ProcessPoolExecutor
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
+# conformer-ml/data/A2CRecurrentEvalAgent-obabel_sets_seven_energy_sum_rewardnorm-50000.model
 def loaded_policy(model, env):
     num_envs = 1
     single_process = (num_envs == 1)
@@ -67,16 +68,22 @@ def loaded_policy(model, env):
 
 if __name__ == '__main__':
     model = RTGNBatch(6, 128, edge_dim=6, point_dim=5)
+    
     model.load_state_dict(torch.load('trained_models/tnet_alkane_eval_final.model', map_location=device))
+    model.to(device)
 
     outputs = []
     times = []
+
     for i in range(10):
         start = time.time()
-        output = loaded_policy(model, 'LigninPruningSkeletonEvalSgldFinalLong015-v0')
+        output = loaded_policy(model, 'AlkaneTest22-v0')
         print('output', output)
         end = time.time()
         outputs.append(output)
         times.append(end - start)
     print('outputs', outputs)
+    print(np.array(outputs).mean(), np.array(outputs).std())
     print('times', times)
+    print(np.array(times).mean(), np.array(times).std())
+

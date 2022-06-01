@@ -16,9 +16,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from main.utils import *
-from main.models import *
-from main.environments import Task
+from idp_rl.utils import *
+from idp_rl.models import *
+from idp_rl.environments import Task
 
 random.seed(4)
 np.random.seed(4)

@@ -4,11 +4,11 @@ import argparse
 import torch
 import logging
 
-from main.config import Config
-from main.utils import *
-from main.models import *
-from main.environments import Task
-from main.agents import A2CRecurrentCurriculumAgent
+from idp_rl.config import Config
+from idp_rl.utils import *
+from idp_rl.models import *
+from idp_rl.environments import Task
+from idp_rl.agents import A2CRecurrentCurriculumAgent
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

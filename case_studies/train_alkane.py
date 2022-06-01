@@ -4,11 +4,11 @@ import argparse
 import torch
 import logging
 
-from main.config import Config
-from main.utils import *
-from main.models import *
-from main.environments import Task
-from main.agents import PPORecurrentAgent
+from idp_rl.config import Config
+from idp_rl.utils import *
+from idp_rl.models import *
+from idp_rl.environments import Task
+from idp_rl.agents import PPORecurrentAgent
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -27,7 +27,7 @@ def ppo_feature(args, tag, env_name, model):
     config.tag=tag
     config.env_name = env_name
 
-    config.num_workers = 35
+    config.num_workers = 1
     config.linear_lr_scale = False
 
     lr_base = args.learning_rate if args.learning_rate else 6.32456E-06
