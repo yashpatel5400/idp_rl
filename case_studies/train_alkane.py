@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import numpy as np
 import random
 import argparse
@@ -79,7 +83,7 @@ if __name__ == '__main__':
 
     mkdir('log')
     mkdir('tf_log')
-    mkdir('data')
+    mkdir('trained_models')
 
     model = RTGNBatch(6, 128, edge_dim=6, point_dim=5)
 

@@ -346,6 +346,7 @@ class SetGibbs(gym.Env):
         self.gibbs_normalize = gibbs_normalize
         self.temp_normal = temp_normal
         self.all_files = glob.glob(f'{folder_name}*.json')
+        print(f"Init files: {self.all_files}")
         self.folder_name = folder_name
 
         if sort_by_size:
@@ -475,6 +476,7 @@ class SetGibbs(gym.Env):
         pass
 
     def molecule_choice(self):
+        print(f"All files: {self.all_files}")
         cjson = np.random.choice(self.all_files)
         with open(cjson) as fp:
             obj = json.load(fp)
@@ -804,12 +806,12 @@ class SetCurriculaExtern(SetGibbs):
 
 class TestSetCurriculaExtern(SetCurriculaExtern):
     def __init__(self):
-        super(TestSetCurriculaExtern, self).__init__('huge_hc_set/10_')
+        super(TestSetCurriculaExtern, self).__init__('data/huge_hc_set/10_')
 
 
 class TestPruningSetCurriculaExtern(SetCurriculaExtern, PruningSetGibbs):
     def __init__(self):
-        super(TestPruningSetCurriculaExtern, self).__init__('huge_hc_set/10_')
+        super(TestPruningSetCurriculaExtern, self).__init__('data/huge_hc_set/10_')
 
 
 class SetCurricula(SetGibbs):
@@ -915,37 +917,37 @@ class SetGibbsSkeletonPoints(SetGibbs):
 
 class TenTorsionSetCurriculumPoints(SetCurriculaExtern, SetGibbsSkeletonPoints, PruningSetGibbs):
     def __init__(self):
-        super(TenTorsionSetCurriculumPoints, self).__init__('huge_hc_set/10_')        
-
+        super(TenTorsionSetCurriculumPoints, self).__init__('data/huge_hc_set/10_')        
+        
 class AlkaneValidation10(UniqueSetGibbs):
     def __init__(self):
-        super(AlkaneValidation10, self).__init__('alkane_validation_10/')
+        super(AlkaneValidation10, self).__init__('data/alkane_validation_10/')
 
 class AlkaneTest11(UniqueSetGibbs):
     def __init__(self):
-        super(AlkaneTest11, self).__init__('alkane_test_11/')
+        super(AlkaneTest11, self).__init__('data/alkane_test_11/')
 
 class AlkaneTest22(UniqueSetGibbs):
     def __init__(self):
-        super(AlkaneTest22, self).__init__('alkane_test_22/')
+        super(AlkaneTest22, self).__init__('data/alkane_test_22/')
 
 class LigninAllSetPruningLogSkeletonCurriculumLong(SetCurriculaExtern, PruningSetLogGibbs, SetGibbsSkeletonPoints, LongEndingSetGibbs):
     def __init__(self):
-        super(LigninAllSetPruningLogSkeletonCurriculumLong, self).__init__('lignin_hightemp/', temp_normal=0.25, sort_by_size=False)
+        super(LigninAllSetPruningLogSkeletonCurriculumLong, self).__init__('data/lignin_hightemp/', temp_normal=0.25, sort_by_size=False)
 
 class LigninAllSetPruningLogSkeletonCurriculumLong015(SetCurriculaExtern, PruningSetLogGibbs, SetGibbsSkeletonPoints, LongEndingSetGibbs):
     def __init__(self):
-        super(LigninAllSetPruningLogSkeletonCurriculumLong015, self).__init__('lignin_hightemp/', temp_normal=0.25, sort_by_size=False, pruning_thresh=0.15)
+        super(LigninAllSetPruningLogSkeletonCurriculumLong015, self).__init__('data/lignin_hightemp/', temp_normal=0.25, sort_by_size=False, pruning_thresh=0.15)
 
 class LigninPruningSkeletonValidationLong(UniqueSetGibbs, SetGibbsSkeletonPoints, LongEndingSetGibbs):
     def __init__(self):
-        super(LigninPruningSkeletonValidationLong, self).__init__('lignin_eval_sample/', temp_normal=0.25, sort_by_size=False)
+        super(LigninPruningSkeletonValidationLong, self).__init__('data/lignin_eval_sample/', temp_normal=0.25, sort_by_size=False)
 
 ## sgld normed 
 class LigninPruningSkeletonEvalSgldFinalLong015(UniqueSetGibbs, SetGibbsSkeletonPoints, LongEndingSetGibbs):
     def __init__(self):
-        super(LigninPruningSkeletonEvalSgldFinalLong015, self).__init__('lignin_eval_final_sgld/', eval=False, temp_normal=0.2519, sort_by_size=False, pruning_thresh=0.15)
+        super(LigninPruningSkeletonEvalSgldFinalLong015, self).__init__('data/lignin_eval_final_sgld/', eval=False, temp_normal=0.2519, sort_by_size=False, pruning_thresh=0.15)
 
 class LigninPruningSkeletonEvalSgldFinalLong015Save(UniqueSetGibbs, SetGibbsSkeletonPoints, LongEndingSetGibbs):
     def __init__(self):
-        super(LigninPruningSkeletonEvalSgldFinalLong015Save, self).__init__('lignin_eval_final_sgld/', eval=True, temp_normal=0.2519, sort_by_size=False, pruning_thresh=0.15)
+        super(LigninPruningSkeletonEvalSgldFinalLong015Save, self).__init__('data/lignin_eval_final_sgld/', eval=True, temp_normal=0.2519, sort_by_size=False, pruning_thresh=0.15)

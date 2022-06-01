@@ -20,7 +20,7 @@ class BaseAgent:
 
         while True:
             if (config.save_interval != 0) and (self.total_steps % config.save_interval == 0):
-                self.save(f'data/{agent_name}-{config.tag}-{self.total_steps}')
+                self.save(f'trained_models/{agent_name}-{config.tag}-{self.total_steps}')
             if (config.eval_interval != 0) and (self.total_steps % config.eval_interval == 0):
                 self.eval_episodes()
             if (config.max_steps != 0) and (self.total_steps >= config.max_steps):
