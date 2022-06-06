@@ -6,82 +6,20 @@ Intrinsically Disordered Proteins using RL (IDP RL)
 IDP RL is a research study for investigating the use of RL to do conformer prediction on intrinsically disordered
 proteins. 
 
-# Installation
+[![Documentation Status](https://readthedocs.org/projects/conformer-rl/badge/?version=latest)](https://conformer-rl.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/conformer-rl.svg)](https://badge.fury.io/py/conformer-rl)
 
-1. To use and install `idp_rl` you first need to install Python. Anaconda is the easiest way:
-```
-wget https://repo.anaconda.com/archive/Anaconda3-2022.05-Linux-x86_64.sh
-bash Anaconda3-2022.05-Linux-x86_64.sh
-```
+## Documentation
+Documentation can be found at https://conformer-rl.readthedocs.io/.
 
-2. For Python dependencies, you then need to install [poetry](https://python-poetry.org/docs/):
-```
-curl -sSL https://install.python-poetry.org | python3 -
-```
+## Platform Support
+Since conformer-rl can be run within a Conda environment, it should work on all platforms (Windows, MacOS, Linux).
 
-3. Now download the idp_rl repo:
-```
-git clone https://github.com/yashpatel5400/idp_rl.git
-```
+## Installation and Quick Start
+Please see the documentation for [installation instructions](https://conformer-rl.readthedocs.io/en/latest/tutorial/install.html) and [getting started](https://conformer-rl.readthedocs.io/en/latest/tutorial/getting_started.html).
 
-5. To create a poetry environment with the `idp_rl` dependencies satisified, run
-```
-cd idp_rl
-poetry install
-poetry shell
-pip install torch-scatter -f https://data.pyg.org/whl/torch-1.11.0+cu102.html
-pip install torch-sparse -f https://data.pyg.org/whl/torch-1.11.0+cu102.html
-```
+## Issues and Feature Requests
+We are actively adding new features to this project and are open to all suggestions. If you believe you have encountered a bug, or if you have a feature that you would like to see implemented, please feel free to file an [issue](https://github.com/ZimmermanGroup/conformer-rl/issues).
 
-6. Verify that bliss is installed correctly by running the tests both on your CPU (default) and on your GPU:
-```
-pytest
-pytest --gpu
-```
-
-# Latest updates
-- The original TorsionNet repo is going through a massive overhaul for IDP RL
-
-
-# References
-
-Tarun Gogineni, Ziping Xu, Exequiel Punzalan, Runxuan Jiang, Joshua Kammeraad, Ambuj Tewari, and Paul Zimmerman. *TorsionNet: A Reinforcement Learning Approach to Sequential Conformer Search* [https://arxiv.org/abs/2006.07078](https://arxiv.org/abs/2006.07078), 2020.
-
----
-
-## File Layout
-
-* The `TorsionNet` directory contains scripts for running each of the three experiments mentioned in the TorsionNet paper: {alkane, lignin, and t_chains}. For more details on running the scripts, see the [run](##Run) section below.
-* Scripts for generating the molecule files for each of the three experiments are located in the `TorsionNet` directory and are named `generate_{branched_alkanes, lignin, t_chain}.py` corresponding to each experiment.
-* The agents, models, and environments are stored in the directory `TorsionNet/main`.
-    * `TorsionNet/main/agents` contains implementations for the custom agents. The main agent used is PPO, which is stored in the file `PPO_recurrent_agent.py`. Some of the code for the agents is roughly based off of the RL framework [DeepRL](https://github.com/ShangtongZhang/DeepRL).
-    * `TorsionNet/main/environments` contains implementations for the reinforcement learning environments used in each experiment. Most environments are stored in `graphenvironments.py`.
-    * The file `models.py` in `TorsionNet/main` contains the implementation for the neural network used in most experiments, RTGNBatch.
-* Pre-trained model parameters for each of the three experiments are stored in `TorsionNet/trained_models`.
-
-## Run
-
-Train and evaluation python scripts are located in the `TorsionNet` directory for all experiments: {alkane, lignin, t_chain}.
-
-Scripts for training agents for each experiment are named `train_[experiment_name].py`. For example, to run the lignin experiments, run
- ```
- cd TorsionNet/
- python train_lignin.py
- ```
-NOTE: for training the alkane environment, unzip the file `huge_hc_set.zip` first.
-
-Model parameters are saved in the `TorsionNet/data` directory. Tensorboard is available to monitor the training process:
-```
-cd TorsionNet/
-tensorboard --logdir tf_log/
-```
-
-Evaluation scripts are available for each of the experiments and are named `eval_[experiment name].py`. To run the evaluation script, we provide sample pre-trained model parameters. If training from scratch, first replace the path parameter in the "torch.load" function in the script with the path of the model weights that perform best on the validation environment. This can be checked via tensorboard. Model weights are stored at the same cadence as validation runs. After replacing the path parameter, the eval script can be run e.g.
-```
-cd TorsionNet/
-python eval_lignin.py
-```
-
-## Results
-
-This is a best effort reproduction of our implementation. There may be some nondeterminism.
+## Developer Documentation
+Pull requests are always welcome for suggestions to improve the code or to add additional features. We encourage new developers to document new features and write unit tests (if applicable). For more information on writing documentation and unit tests, see the [developer documentation](https://conformer-rl.readthedocs.io/en/latest/developer.html).

@@ -1,4 +1,0 @@
-{
-    "model_path": "trained_models/tnet_alkane_eval_final.model",
-    "env_name": "LigninPruningSkeletonEvalSgldFinalLong015-v0"
-}

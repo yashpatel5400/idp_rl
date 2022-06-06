@@ -1,2 +1,0 @@
-from .PPO_recurrent_agent import PPORecurrentAgent
-from .tchain_agents import A2CRecurrentCurriculumAgent
