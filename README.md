@@ -23,3 +23,16 @@ We are actively adding new features to this project and are open to all suggesti
 
 ## Developer Documentation
 Pull requests are always welcome for suggestions to improve the code or to add additional features. We encourage new developers to document new features and write unit tests (if applicable). For more information on writing documentation and unit tests, see the [developer documentation](https://conformer-rl.readthedocs.io/en/latest/developer.html).
+
+========================================
+## Running on Great Lakes
+Run the following code to do installation for now for Great Lakes:
+```bash
+conda create --name rl python=3.8
+conda activate rl
+
+python -m pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
+python -m pip install torch-scatter -f https://data.pyg.org/whl/torch-1.11.0+cpu.html
+python -m pip install torch-sparse -f https://data.pyg.org/whl/torch-1.11.0+cpu.html
+python -m pip install torch-geometric tensorboard rdkit gym stable-baselines3 py3Dmol
+```
