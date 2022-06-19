@@ -4,16 +4,6 @@ import simtk.unit as u
 import numpy as np
 
 def test_charmm():
-    """
-    Test CHARMM ffxml conversion by computing energy discrepancies between (pdb, psf, toppar) loaded via ParmEd and (pdb, ffxml) loaded via OpenMM ForceField
-
-    Parameters
-    ----------
-    write_serialized_xml : bool, optional, default=False
-        If True, will write out serialized System XML files for OpenMM systems to aid debugging.
-
-    """
-
     # SOLVENT_KWARGS = {
     #     'nonbondedMethod' : app.PME,
     #     'constraints' : None,
