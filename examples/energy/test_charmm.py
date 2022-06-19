@@ -33,12 +33,12 @@ def test_charmm():
     }
 
     testsystems = [
-        ('1VII solvated', 'tests/charmm-gui/1VII/step2_solvator.pdb', 'tests/charmm-gui/1VII/step2_solvator.psf', ['ffxml/charmm36.xml'], ['toppar/par_all36_prot.prm', 'toppar/top_all36_prot.rtf','toppar/toppar_water_ions.str'], 'tests/charmm-gui/1VII/step2.1_waterbox.prm', SOLVENT_KWARGS),
+        ('1VII solvated', 'tests/step2_solvator.pdb', 'tests/step2_solvator.psf', ['toppar/par_all36_prot.prm', 'toppar/top_all36_prot.rtf','toppar/toppar_water_ions.str'], 'tests/step2.1_waterbox.prm', SOLVENT_KWARGS),
     ]
 
-    for (name, pdb_filename, psf_filename, ffxml_filenames, toppar_filenames, box_vectors_filename, system_kwargs) in testsystems:
+    for (name, pdb_filename, psf_filename, toppar_filenames, box_vectors_filename, system_kwargs) in testsystems:
         print('Testing %s' % name)
-        compare_energies(name, pdb_filename, psf_filename, ffxml_filenames, toppar_filenames, box_vectors_filename=box_vectors_filename, system_kwargs=system_kwargs)
+        compare_energies(name, pdb_filename, psf_filename, toppar_filenames, box_vectors_filename=box_vectors_filename, system_kwargs=system_kwargs)
 
 def write_serialized_system(filename, system):
     """
@@ -128,7 +128,7 @@ def compute_potential(system, positions):
     del context, integrator
     return potential
 
-def compare_energies(system_name, pdb_filename, psf_filename, ffxml_filenames, toppar_filenames, box_vectors_filename=None, system_kwargs=None, tolerance=1e-5, units=u.kilojoules_per_mole, write_serialized_xml=False):
+def compare_energies(system_name, pdb_filename, psf_filename, toppar_filenames, box_vectors_filename=None, system_kwargs=None, tolerance=1e-5, units=u.kilojoules_per_mole, write_serialized_xml=False):
     """
     Compare energies between (pdb, psf, toppar) loaded via ParmEd and (pdb, ffxml) loaded by OpenMM ForceField
 
@@ -140,8 +140,6 @@ def compare_energies(system_name, pdb_filename, psf_filename, ffxml_filenames, t
         Name of PDB file that should contain CRYST entry and PDB format compliant CONECT records for HETATM residues.
     psf_filename : str
         CHARMM PSF file
-    ffxml_filenames : list of str
-        List of OpenMM ffxml files
     toppar_filenames : list of CHARMM toppar filenames to load into CharmmParameterSet
         List of CHARMM toppar files
     box_vectors_filename : str, optional, default=None
