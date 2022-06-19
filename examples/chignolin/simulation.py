@@ -1,10 +1,12 @@
 import sys
 import random
-from simtk import openmm, unit
-from simtk.openmm import app
-import numpy as np
+import openmm
 import mdtraj
+
+import numpy as np
 import matplotlib.pyplot as plt
+from simtk import unit
+from openmm import app
 
 # load files
 psf = app.CharmmPsfFile("init.psf")
