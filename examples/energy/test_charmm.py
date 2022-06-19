@@ -1,17 +1,6 @@
-from parmed.charmm import CharmmParameterSet, CharmmPsfFile
-from parmed import openmm
-import glob
-import yaml
-from collections import OrderedDict
-import hashlib
-import os
-import simtk.openmm.app as app
-import simtk.openmm as mm
+import openmm
+import openmm.app as app
 import simtk.unit as u
-import argparse
-import csv
-import logging
-import warnings
 import numpy as np
 
 def test_charmm():
@@ -39,21 +28,6 @@ def test_charmm():
     for (name, pdb_filename, psf_filename, toppar_filenames, box_vectors_filename, system_kwargs) in testsystems:
         print('Testing %s' % name)
         compare_energies(name, pdb_filename, psf_filename, toppar_filenames, box_vectors_filename=box_vectors_filename, system_kwargs=system_kwargs)
-
-def write_serialized_system(filename, system):
-    """
-    Serlialize an OpenMM System to a file
-
-    Parameters
-    ----------
-    filename : str
-        The name of the file to be written
-    system : simtk.openmm.System
-        The System object to be written
-
-    """
-    with open(filename, 'w') as outfile:
-        outfile.write(mm.XmlSerializer.serialize(system))
 
 def read_box_vectors(filename):
     """
@@ -121,8 +95,8 @@ def compute_potential(system, positions):
         The potential energy
 
     """
-    integrator = mm.VerletIntegrator(1.0)
-    context = mm.Context(system, integrator)
+    integrator = openmm.VerletIntegrator(1.0)
+    context = openmm.Context(system, integrator)
     context.setPositions(positions)
     potential = context.getState(getEnergy=True).getPotentialEnergy()
     del context, integrator
@@ -172,25 +146,9 @@ def compare_energies(system_name, pdb_filename, psf_filename, toppar_filenames, 
     if is_periodic:
         openmm_psf.setBox(box_vectors[0][0], box_vectors[1][1], box_vectors[2][2])
     openmm_system = openmm_psf.createSystem(openmm_toppar, **system_kwargs)
-    openmm_structure = openmm.load_topology(openmm_psf.topology, openmm_system, xyz=pdbfile.positions)
     openmm_total_energy = compute_potential(openmm_system, pdbfile.positions) / units
 
-    # Load CHARMM system through ParmEd
-    parmed_toppar = CharmmParameterSet(*toppar_filenames)
-    parmed_structure = CharmmPsfFile(psf_filename)
-    #structure.load_parameters(toppar)
-    parmed_structure.positions = pdbfile.positions
-    # Set box vectors
-    if is_periodic:
-        parmed_structure.box = (
-            box_vectors[0][0] / u.angstroms, box_vectors[1][1] / u.angstroms, box_vectors[2][2] / u.angstroms,
-            90, 90, 90
-            )
-    parmed_system = parmed_structure.createSystem(parmed_toppar, **system_kwargs)
-    parmed_total_energy = compute_potential(parmed_system, pdbfile.positions) / units
-
-    print(f"OpenMM: {openmm_total_energy}")
-    print(f"ParMed: {parmed_total_energy}")
+    print(f"Energy: {openmm_total_energy}")
 
 if __name__ == '__main__':
     test_charmm()
