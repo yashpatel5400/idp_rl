@@ -26,9 +26,6 @@ system = psf.createSystem(params,
     verbose=True, 
     ewaldErrorTolerance=0.0005)
 
-barostat = openmm.MonteCarloBarostat(1.0*unit.bar, 300.0*unit.kelvin)
-system.addForce(barostat)
-
 # integrator
 integrator = openmm.LangevinIntegrator(300.0*unit.kelvin,   # Temperature of head bath
                                        1.0/unit.picosecond, # Friction coefficient
