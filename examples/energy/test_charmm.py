@@ -34,7 +34,6 @@ def compare_energies(system_name, pdb_filename, psf_filename, toppar_filenames, 
     simulation = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform)
     simulation.context.setPositions(pdbfile.positions)
 
-    # initial system energy
     print(simulation.context.getState(getEnergy=True).getPotentialEnergy())
     simulation.minimizeEnergy()
     print(simulation.context.getState(getEnergy=True).getPotentialEnergy())
