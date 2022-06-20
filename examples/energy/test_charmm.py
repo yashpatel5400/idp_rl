@@ -23,37 +23,21 @@ def test_charmm():
     for (name, pdb_filename, psf_filename, toppar_filenames, system_kwargs) in testsystems:
         compare_energies(name, pdb_filename, psf_filename, toppar_filenames, system_kwargs=system_kwargs)
 
-def compute_potential(system, positions):
-    """
-    Compute potential energy
-
-    Parameters
-    ----------
-    system : simtk.openmm.System
-        System
-    positions : simtk.unit.Quantity of shape [nparticles,3] with units compatible with angstroms
-        Positions
-
-    Returns
-    -------
-    potential : simtk.unit.Quantity with units of kJ/mol
-        The potential energy
-
-    """
-    integrator = openmm.VerletIntegrator(1.0)
-    context = openmm.Context(system, integrator)
-    context.setPositions(positions)
-    potential = context.getState(getEnergy=True).getPotentialEnergy()
-    del context, integrator
-    return potential
-
 def compare_energies(system_name, pdb_filename, psf_filename, toppar_filenames, system_kwargs=None, tolerance=1e-5, units=u.kilojoules_per_mole, write_serialized_xml=False):
     pdbfile = app.PDBFile(pdb_filename)
     openmm_toppar = app.CharmmParameterSet(*toppar_filenames)
     openmm_psf = app.CharmmPsfFile(psf_filename)
     openmm_system = openmm_psf.createSystem(openmm_toppar, **system_kwargs)
-    openmm_total_energy = compute_potential(openmm_system, pdbfile.positions) / units
-    print(f"Energy: {openmm_total_energy}")
+
+    integrator = openmm.VerletIntegrator(1.0)
+    platform = openmm.Platform.getPlatformByName("CPU")
+    simulation = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform)
+    simulation.context.setPositions(pdbfile.positions)
+
+    # initial system energy
+    print(simulation.context.getState(getEnergy=True).getPotentialEnergy())
+    simulation.minimizeEnergy()
+    print(simulation.context.getState(getEnergy=True).getPotentialEnergy())
 
 if __name__ == '__main__':
     test_charmm()
