@@ -1,3 +1,15 @@
+import numpy as np
+import sys
+import math
+import timeit
+from rdkit import Chem
+from rdkit.Chem import AllChem
+from rdkit.Chem import Draw
+from rdkit.Chem.Draw import IPythonConsole
+import py3Dmol
+from simtk.openmm import openmm
+from typing import Any, List, Optional, Tuple
+
 import openmm
 import openmm.app as app
 import simtk.unit as u
@@ -30,8 +42,8 @@ def compare_energies(system_name, pdb_filename, psf_filename, toppar_filenames, 
     simulation.context.setPositions(pdbfile.positions)
 
     print(simulation.context.getState(getEnergy=True).getPotentialEnergy())
-    simulation.minimizeEnergy(maxIterations=500)
-    print(simulation.context.getState(getEnergy=True).getPotentialEnergy())
+    # simulation.minimizeEnergy(maxIterations=500)
+    # print(simulation.context.getState(getEnergy=True).getPotentialEnergy())
 
 if __name__ == "__main__":
     test_charmm()
