@@ -17,11 +17,11 @@ def test_charmm():
     }
 
     testsystems = [
-        ('1VII protein', 'tests/step1_pdbreader.pdb', 'tests/step1_pdbreader.psf', ['toppar/par_all36_prot.prm', 'toppar/top_all36_prot.rtf','toppar/toppar_water_ions.str'], None, VACUUM_KWARGS),
+        ('1VII protein', 'tests/step1_pdbreader.pdb', 'tests/step1_pdbreader.psf', ['toppar/par_all36_prot.prm', 'toppar/top_all36_prot.rtf','toppar/toppar_water_ions.str'], VACUUM_KWARGS),
     ]
 
-    for (name, pdb_filename, psf_filename, toppar_filenames, box_vectors_filename, system_kwargs) in testsystems:
-        compare_energies(name, pdb_filename, psf_filename, toppar_filenames, box_vectors_filename=box_vectors_filename, system_kwargs=system_kwargs)
+    for (name, pdb_filename, psf_filename, toppar_filenames, system_kwargs) in testsystems:
+        compare_energies(name, pdb_filename, psf_filename, toppar_filenames, system_kwargs=system_kwargs)
 
 def compute_potential(system, positions):
     """
@@ -47,7 +47,7 @@ def compute_potential(system, positions):
     del context, integrator
     return potential
 
-def compare_energies(system_name, pdb_filename, psf_filename, toppar_filenames, box_vectors_filename=None, system_kwargs=None, tolerance=1e-5, units=u.kilojoules_per_mole, write_serialized_xml=False):
+def compare_energies(system_name, pdb_filename, psf_filename, toppar_filenames, system_kwargs=None, tolerance=1e-5, units=u.kilojoules_per_mole, write_serialized_xml=False):
     pdbfile = app.PDBFile(pdb_filename)
     openmm_toppar = app.CharmmParameterSet(*toppar_filenames)
     openmm_psf = app.CharmmPsfFile(psf_filename)
