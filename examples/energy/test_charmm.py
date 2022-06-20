@@ -4,26 +4,21 @@ import simtk.unit as u
 import numpy as np
 
 def test_charmm():
-    # SOLVENT_KWARGS = {
-    #     'nonbondedMethod' : app.PME,
-    #     'constraints' : None,
-    #     'rigidWater' : True,
-    #     'nonbondedCutoff' : 12.0 * u.angstroms,
-    # }
-
-    VACUUM_KWARGS = {
-        'nonbondedMethod' : app.NoCutoff,
-        'constraints' : None,
+    SOLVENT_KWARGS = {
+        "nonbondedMethod": app.NoCutoff,
+        "constraints": app.HBonds,
+        "implicitSolvent": app.HCT,
+        "rigidWater": True,
     }
 
     testsystems = [
-        ('1VII protein', 'tests/step1_pdbreader.pdb', 'tests/step1_pdbreader.psf', ['toppar/par_all36_prot.prm', 'toppar/top_all36_prot.rtf','toppar/toppar_water_ions.str'], VACUUM_KWARGS),
+        ("1VII protein", "tests/step1_pdbreader.pdb", "tests/step1_pdbreader.psf", ["toppar/par_all36_prot.prm", "toppar/top_all36_prot.rtf","toppar/toppar_water_ions.str"], SOLVENT_KWARGS),
     ]
 
     for (name, pdb_filename, psf_filename, toppar_filenames, system_kwargs) in testsystems:
         compare_energies(name, pdb_filename, psf_filename, toppar_filenames, system_kwargs=system_kwargs)
 
-def compare_energies(system_name, pdb_filename, psf_filename, toppar_filenames, system_kwargs=None, tolerance=1e-5, units=u.kilojoules_per_mole, write_serialized_xml=False):
+def compare_energies(system_name, pdb_filename, psf_filename, toppar_filenames, system_kwargs=None, units=u.kilojoules_per_mole):
     pdbfile = app.PDBFile(pdb_filename)
     openmm_toppar = app.CharmmParameterSet(*toppar_filenames)
     openmm_psf = app.CharmmPsfFile(psf_filename)
@@ -35,8 +30,8 @@ def compare_energies(system_name, pdb_filename, psf_filename, toppar_filenames, 
     simulation.context.setPositions(pdbfile.positions)
 
     print(simulation.context.getState(getEnergy=True).getPotentialEnergy())
-    simulation.minimizeEnergy()
+    simulation.minimizeEnergy(maxIterations=500)
     print(simulation.context.getState(getEnergy=True).getPotentialEnergy())
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_charmm()
