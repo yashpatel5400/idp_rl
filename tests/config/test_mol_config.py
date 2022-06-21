@@ -1,4 +1,4 @@
-from conformer_rl.config.mol_config import MolConfig
+from idp_rl.config.mol_config import MolConfig
 
 def test_config():
     config = MolConfig()

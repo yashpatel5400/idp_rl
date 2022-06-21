@@ -1,4 +1,4 @@
-from conformer_rl.environments.environment_components.molecule_features import bond_type, get_bond_pairs, atom_coords, atom_type_CO
+from idp_rl.environments.environment_components.molecule_features import bond_type, get_bond_pairs, atom_coords, atom_type_CO
 import pytest
 from rdkit import Chem
 

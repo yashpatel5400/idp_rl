@@ -1,5 +1,5 @@
 import torch
-from conformer_rl.agents.storage import Storage
+from idp_rl.agents.storage import Storage
 
 class Obj:
     def __init__(self, worker, batch):

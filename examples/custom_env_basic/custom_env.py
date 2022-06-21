@@ -1,7 +1,7 @@
-from conformer_rl.environments import ConformerEnv
-from conformer_rl.environments.environment_components.action_mixins import DiscreteActionMixin
-from conformer_rl.environments.environment_components.obs_mixins import AtomTypeGraphObsMixin
-from conformer_rl.environments.environment_components.reward_mixins import GibbsPruningRewardMixin
+from idp_rl.environments import ConformerEnv
+from idp_rl.environments.environment_components.action_mixins import DiscreteActionMixin
+from idp_rl.environments.environment_components.obs_mixins import AtomTypeGraphObsMixin
+from idp_rl.environments.environment_components.reward_mixins import GibbsPruningRewardMixin
 
 import gym
 # construct custom environment from pre-built environment mixins

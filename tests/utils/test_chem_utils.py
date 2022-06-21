@@ -1,8 +1,8 @@
-from conformer_rl.utils import chem_utils
+from idp_rl.utils import chem_utils
 import numpy as np
 
 def test_tfd_matrix(mocker):
-    tf = mocker.patch('conformer_rl.utils.chem_utils.TorsionFingerprints')
+    tf = mocker.patch('idp_rl.utils.chem_utils.TorsionFingerprints')
     tf.GetTFDMatrix.return_value = [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
     mat = chem_utils.tfd_matrix('mol')
     assert np.array_equal(mat, np.array(

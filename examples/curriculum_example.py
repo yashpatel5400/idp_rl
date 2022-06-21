@@ -2,14 +2,14 @@ import numpy as np
 import torch
 import pickle
 
-from conformer_rl import utils
-from conformer_rl.config import Config
-from conformer_rl.environments import Task
-from conformer_rl.models import RTGNRecurrent
+from idp_rl import utils
+from idp_rl.config import Config
+from idp_rl.environments import Task
+from idp_rl.models import RTGNRecurrent
 
-from conformer_rl.molecule_generation.generate_alkanes import generate_branched_alkane
-from conformer_rl.molecule_generation.generate_molecule_config import config_from_rdkit
-from conformer_rl.agents import PPORecurrentExternalCurriculumAgent
+from idp_rl.molecule_generation.generate_alkanes import generate_branched_alkane
+from idp_rl.molecule_generation.generate_molecule_config import config_from_rdkit
+from idp_rl.agents import PPORecurrentExternalCurriculumAgent
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
                                                                                                                                                                                                      

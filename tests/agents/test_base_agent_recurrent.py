@@ -1,12 +1,12 @@
-import conformer_rl
-from conformer_rl.agents.base_ac_agent_recurrent import BaseAgentRecurrent
+import idp_rl
+from idp_rl.agents.base_ac_agent_recurrent import BaseAgentRecurrent
 
 def mock_init(self):
     pass
 
 def test_save_evaluate(mocker):
-    mocker.patch.object(conformer_rl.agents.base_agent_recurrent.BaseAgentRecurrent, '__init__', mock_init)
-    mocker.patch('conformer_rl.agents.base_agent_recurrent.to_np')
+    mocker.patch.object(idp_rl.agents.base_agent_recurrent.BaseAgentRecurrent, '__init__', mock_init)
+    mocker.patch('idp_rl.agents.base_agent_recurrent.to_np')
 
     network = mocker.Mock()
     network.return_value = {'a': 'action'}, 'rstates'
@@ -33,4 +33,4 @@ def test_save_evaluate(mocker):
 
     eval_logger.log_step.assert_called_with('log1')
     network.assert_called_with('reset_state', None)
-    conformer_rl.agents.base_agent_recurrent.to_np.assert_called_with('action')
+    idp_rl.agents.base_agent_recurrent.to_np.assert_called_with('action')

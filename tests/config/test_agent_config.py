@@ -1,4 +1,4 @@
-from conformer_rl.config.agent_config import Config
+from idp_rl.config.agent_config import Config
 
 def test_config():
     config = Config()

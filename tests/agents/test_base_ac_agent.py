@@ -1,5 +1,5 @@
-import conformer_rl
-from conformer_rl.agents.base_ac_agent import BaseACAgent
+import idp_rl
+from idp_rl.agents.base_ac_agent import BaseACAgent
 import numpy as np
 import pytest
 import torch
@@ -13,35 +13,35 @@ def test_init(mocker):
         self.task = mocker.Mock()
         self.num_workers = 5
 
-    mocker.patch('conformer_rl.agents.base_ac_agent.BaseAgent.__init__', inner_mock_init)
-    mocker.patch('conformer_rl.agents.base_ac_agent.np.zeros')
+    mocker.patch('idp_rl.agents.base_ac_agent.BaseAgent.__init__', inner_mock_init)
+    mocker.patch('idp_rl.agents.base_ac_agent.np.zeros')
 
     config = mocker.Mock()
 
     agent = BaseACAgent(config)
-    conformer_rl.agents.base_ac_agent.np.zeros.assert_called_with(5)
+    idp_rl.agents.base_ac_agent.np.zeros.assert_called_with(5)
 
     agent.task.reset.assert_called()
     
 def test_step(mocker):
     storage = mocker.Mock()
-    mocker.patch.object(conformer_rl.agents.base_ac_agent.BaseACAgent, '__init__', mock_init)
-    mocker.patch('conformer_rl.agents.base_ac_agent.BaseACAgent._sample')
-    mocker.patch('conformer_rl.agents.base_ac_agent.BaseACAgent._calculate_advantages')
-    mocker.patch('conformer_rl.agents.base_ac_agent.BaseACAgent._train')
+    mocker.patch.object(idp_rl.agents.base_ac_agent.BaseACAgent, '__init__', mock_init)
+    mocker.patch('idp_rl.agents.base_ac_agent.BaseACAgent._sample')
+    mocker.patch('idp_rl.agents.base_ac_agent.BaseACAgent._calculate_advantages')
+    mocker.patch('idp_rl.agents.base_ac_agent.BaseACAgent._train')
 
     agent = BaseACAgent()
     agent.storage = storage
     agent.step()
 
-    conformer_rl.agents.base_ac_agent.BaseACAgent._sample.assert_called_once()
-    conformer_rl.agents.base_ac_agent.BaseACAgent._calculate_advantages.assert_called_once()
-    conformer_rl.agents.base_ac_agent.BaseACAgent._train.assert_called_once()
+    idp_rl.agents.base_ac_agent.BaseACAgent._sample.assert_called_once()
+    idp_rl.agents.base_ac_agent.BaseACAgent._calculate_advantages.assert_called_once()
+    idp_rl.agents.base_ac_agent.BaseACAgent._train.assert_called_once()
     storage.reset.assert_called_once()
 
 def test_sample(mocker):
-    mocker.patch.object(conformer_rl.agents.base_ac_agent.BaseACAgent, '__init__', mock_init)
-    mocker.patch('conformer_rl.agents.base_ac_agent.to_np')
+    mocker.patch.object(idp_rl.agents.base_ac_agent.BaseACAgent, '__init__', mock_init)
+    mocker.patch('idp_rl.agents.base_ac_agent.to_np')
 
     storage = mocker.Mock()
 
@@ -74,7 +74,7 @@ def test_sample(mocker):
     assert(train_logger.add_scalar.call_count == 12)
 
 def test_calculate_advantages_sarsa(mocker):
-    mocker.patch.object(conformer_rl.agents.base_ac_agent.BaseACAgent, '__init__', mock_init)
+    mocker.patch.object(idp_rl.agents.base_ac_agent.BaseACAgent, '__init__', mock_init)
 
     config = mocker.Mock()
     config.rollout_length = 7
@@ -100,7 +100,7 @@ def test_calculate_advantages_sarsa(mocker):
     assert(torch.sum(torch.abs(torch.tensor([38.8125, 35.75, 29, 22.5, 10, 5, 20.5]).unsqueeze(0) - torch.tensor(agent.returns))) < 1e-5)
 
 def test_calculate_advantages_gae(mocker):
-    mocker.patch.object(conformer_rl.agents.base_ac_agent.BaseACAgent, '__init__', mock_init)
+    mocker.patch.object(idp_rl.agents.base_ac_agent.BaseACAgent, '__init__', mock_init)
 
     config = mocker.Mock()
     config.rollout_length = 7
@@ -127,7 +127,7 @@ def test_calculate_advantages_gae(mocker):
     assert(torch.sum(torch.abs(torch.tensor([20.46875, 17.25, 28, 18.25, 6, 2, 13.5]).unsqueeze(0) - torch.tensor(agent.advantages))) < 1e-5)
 
 def test_train(mocker):
-    mocker.patch.object(conformer_rl.agents.base_ac_agent.BaseACAgent, '__init__', mock_init)
+    mocker.patch.object(idp_rl.agents.base_ac_agent.BaseACAgent, '__init__', mock_init)
     agent = BaseACAgent()
     with pytest.raises(NotImplementedError):
         agent._train()

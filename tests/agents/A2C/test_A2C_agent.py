@@ -1,14 +1,14 @@
-import conformer_rl
+import idp_rl
 import torch
-from conformer_rl.agents.A2C.A2C_agent import A2CAgent
+from idp_rl.agents.A2C.A2C_agent import A2CAgent
 
 def mock_init(self):
     pass
 
 def test_train(mocker):
-    mocker.patch('conformer_rl.agents.A2C.A2C_agent.A2CAgent.__init__', mock_init)
+    mocker.patch('idp_rl.agents.A2C.A2C_agent.A2CAgent.__init__', mock_init)
     backward = mocker.patch('torch.Tensor.backward')
-    nn = mocker.patch('conformer_rl.agents.A2C.A2C_agent.nn')
+    nn = mocker.patch('idp_rl.agents.A2C.A2C_agent.nn')
 
     config = mocker.Mock()
     config.rollout_length = 2

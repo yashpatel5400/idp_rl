@@ -1,6 +1,6 @@
-import conformer_rl
+import idp_rl
 import torch
-from conformer_rl.agents.A2C.A2C_recurrent_agent import A2CRecurrentAgent
+from idp_rl.agents.A2C.A2C_recurrent_agent import A2CRecurrentAgent
 
 def mock_init(self):
     pass
@@ -9,7 +9,7 @@ def test_init(mocker):
     def inner_init(self, config):
         self.recurrence = 6
         self.num_workers=12
-    mocker.patch('conformer_rl.agents.A2C.A2C_recurrent_agent.BaseACAgentRecurrent.__init__', inner_init)
+    mocker.patch('idp_rl.agents.A2C.A2C_recurrent_agent.BaseACAgentRecurrent.__init__', inner_init)
     config = mocker.Mock()
     config.rollout_length = 5
 
@@ -18,9 +18,9 @@ def test_init(mocker):
 
 
 def test_train_losses(mocker):
-    mocker.patch('conformer_rl.agents.A2C.A2C_recurrent_agent.A2CRecurrentAgent.__init__', mock_init)
+    mocker.patch('idp_rl.agents.A2C.A2C_recurrent_agent.A2CRecurrentAgent.__init__', mock_init)
     backward = mocker.patch('torch.Tensor.backward')
-    nn = mocker.patch('conformer_rl.agents.A2C.A2C_recurrent_agent.nn')
+    nn = mocker.patch('idp_rl.agents.A2C.A2C_recurrent_agent.nn')
 
     config = mocker.Mock()
     config.rollout_length = 2
@@ -75,9 +75,9 @@ def test_train_losses(mocker):
     nn.utils.clip_grad_norm_.assert_called_once()
 
 def test_recurrence(mocker):
-    mocker.patch('conformer_rl.agents.A2C.A2C_recurrent_agent.A2CRecurrentAgent.__init__', mock_init)
+    mocker.patch('idp_rl.agents.A2C.A2C_recurrent_agent.A2CRecurrentAgent.__init__', mock_init)
     backward = mocker.patch('torch.Tensor.backward')
-    nn = mocker.patch('conformer_rl.agents.A2C.A2C_recurrent_agent.nn')
+    nn = mocker.patch('idp_rl.agents.A2C.A2C_recurrent_agent.nn')
 
     config = mocker.Mock()
     config.rollout_length = 2

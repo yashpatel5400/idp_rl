@@ -1,10 +1,10 @@
-import conformer_rl
-from conformer_rl.environments.environment_components.action_mixins import ContinuousActionMixin, DiscreteActionMixin
+import idp_rl
+from idp_rl.environments.environment_components.action_mixins import ContinuousActionMixin, DiscreteActionMixin
 from rdkit import Chem
 
 def test_continuous(mocker):
-    setDihedrals = mocker.patch('conformer_rl.environments.environment_components.action_mixins.Chem.rdMolTransforms.SetDihedralDeg')
-    MMFFOptimize = mocker.patch('conformer_rl.environments.environment_components.action_mixins.Chem.AllChem.MMFFOptimizeMolecule')
+    setDihedrals = mocker.patch('idp_rl.environments.environment_components.action_mixins.Chem.rdMolTransforms.SetDihedralDeg')
+    MMFFOptimize = mocker.patch('idp_rl.environments.environment_components.action_mixins.Chem.AllChem.MMFFOptimizeMolecule')
 
     env = ContinuousActionMixin()
     mol = Chem.MolFromSmiles('CCCCCCCC')
@@ -30,8 +30,8 @@ def test_continuous(mocker):
     assert env.episode_info['mol'].GetNumConformers() == 2
 
 def test_discrete(mocker):
-    setDihedrals = mocker.patch('conformer_rl.environments.environment_components.action_mixins.Chem.rdMolTransforms.SetDihedralDeg')
-    MMFFOptimize = mocker.patch('conformer_rl.environments.environment_components.action_mixins.Chem.AllChem.MMFFOptimizeMolecule')
+    setDihedrals = mocker.patch('idp_rl.environments.environment_components.action_mixins.Chem.rdMolTransforms.SetDihedralDeg')
+    MMFFOptimize = mocker.patch('idp_rl.environments.environment_components.action_mixins.Chem.AllChem.MMFFOptimizeMolecule')
 
     env = DiscreteActionMixin()
     mol = Chem.MolFromSmiles('CCCCCCCC')

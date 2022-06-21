@@ -1,11 +1,11 @@
-from conformer_rl.utils import misc_utils
+from idp_rl.utils import misc_utils
 import datetime
 import os
 import torch
 import numpy as np
 
 def test_time(mocker):
-    dt = mocker.patch('conformer_rl.utils.misc_utils.datetime')
+    dt = mocker.patch('idp_rl.utils.misc_utils.datetime')
     dt.now.return_value = datetime.datetime(2000, 5, 20, 14, 32, 33)
     assert misc_utils.current_time() == "20-05-2000_14:32:33"
 
@@ -15,7 +15,7 @@ def test_thread():
     assert os.environ['MKL_NUM_THREADS'] == '1'
 
 def test_utils(mocker):
-    path = mocker.patch('conformer_rl.utils.misc_utils.Path')
+    path = mocker.patch('idp_rl.utils.misc_utils.Path')
     file = mocker.Mock()
     path.return_value = file
 
@@ -27,7 +27,7 @@ def test_utils(mocker):
 
     model = mocker.Mock()
     model.state_dict.return_value = 'state_dict'
-    t = mocker.patch('conformer_rl.utils.misc_utils.torch')
+    t = mocker.patch('idp_rl.utils.misc_utils.torch')
     misc_utils.save_model(model, "filename")
     t.save.assert_called_with('state_dict', 'filename')
 

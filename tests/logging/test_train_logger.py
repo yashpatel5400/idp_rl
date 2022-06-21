@@ -1,10 +1,10 @@
-import conformer_rl
-from conformer_rl.logging.train_logger import TrainLogger
+import idp_rl
+from idp_rl.logging.train_logger import TrainLogger
 
 def test_basic(mocker):
-    mocker.patch('conformer_rl.logging.train_logger.mkdir')
-    swriter = mocker.patch('conformer_rl.logging.train_logger.SummaryWriter')
-    prt = mocker.patch('conformer_rl.logging.train_logger.print')
+    mocker.patch('idp_rl.logging.train_logger.mkdir')
+    swriter = mocker.patch('idp_rl.logging.train_logger.SummaryWriter')
+    prt = mocker.patch('idp_rl.logging.train_logger.print')
 
     writer = mocker.Mock()
 

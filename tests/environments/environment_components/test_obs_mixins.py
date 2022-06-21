@@ -1,4 +1,4 @@
-from conformer_rl.environments.environment_components.obs_mixins import GraphObsMixin, AtomTypeGraphObsMixin, AtomCoordsTypeGraphObsMixin
+from idp_rl.environments.environment_components.obs_mixins import GraphObsMixin, AtomTypeGraphObsMixin, AtomCoordsTypeGraphObsMixin
 import torch
 
 def atype(atom):
@@ -32,13 +32,13 @@ def test_GraphObsMixin(mocker):
     mol.GetAtoms.return_value = ['a1', 'a2', 'a3']
     mol.GetBonds.return_value = ['b1', 'b2']
 
-    removeHs = mocker.patch('conformer_rl.environments.environment_components.obs_mixins.Chem.rdmolops.RemoveHs')
+    removeHs = mocker.patch('idp_rl.environments.environment_components.obs_mixins.Chem.rdmolops.RemoveHs')
     removeHs.return_value = mol
-    bond_type = mocker.patch('conformer_rl.environments.environment_components.obs_mixins.molecule_features.bond_type')
+    bond_type = mocker.patch('idp_rl.environments.environment_components.obs_mixins.molecule_features.bond_type')
     bond_type.side_effect = btype
-    atom_coords = mocker.patch('conformer_rl.environments.environment_components.obs_mixins.molecule_features.atom_coords')
+    atom_coords = mocker.patch('idp_rl.environments.environment_components.obs_mixins.molecule_features.atom_coords')
     atom_coords.side_effect = acoords
-    bond_pairs = mocker.patch('conformer_rl.environments.environment_components.molecule_features.get_bond_pairs')
+    bond_pairs = mocker.patch('idp_rl.environments.environment_components.molecule_features.get_bond_pairs')
     bond_pairs.return_value = [[0, 1, 1, 2, 2, 0], [1, 0, 2, 1, 0, 2]]
 
     env = GraphObsMixin()
@@ -59,13 +59,13 @@ def test_AtomTypeGraphObsMixin(mocker):
     mol.GetAtoms.return_value = ['a1', 'a2', 'a3']
     mol.GetBonds.return_value = ['b1', 'b2']
 
-    removeHs = mocker.patch('conformer_rl.environments.environment_components.obs_mixins.Chem.rdmolops.RemoveHs')
+    removeHs = mocker.patch('idp_rl.environments.environment_components.obs_mixins.Chem.rdmolops.RemoveHs')
     removeHs.return_value = mol
-    atom_type = mocker.patch('conformer_rl.environments.environment_components.obs_mixins.molecule_features.atom_type_CO')
+    atom_type = mocker.patch('idp_rl.environments.environment_components.obs_mixins.molecule_features.atom_type_CO')
     atom_type.side_effect = atype
-    bond_type = mocker.patch('conformer_rl.environments.environment_components.obs_mixins.molecule_features.bond_type')
+    bond_type = mocker.patch('idp_rl.environments.environment_components.obs_mixins.molecule_features.bond_type')
     bond_type.side_effect = btype
-    bond_pairs = mocker.patch('conformer_rl.environments.environment_components.molecule_features.get_bond_pairs')
+    bond_pairs = mocker.patch('idp_rl.environments.environment_components.molecule_features.get_bond_pairs')
     bond_pairs.return_value = [[0, 1, 1, 2, 2, 0], [1, 0, 2, 1, 0, 2]]
 
     env = AtomTypeGraphObsMixin()
@@ -87,15 +87,15 @@ def test_AtomCoordsTypeGraphObsMixin(mocker):
     mol.GetAtoms.return_value = ['a1', 'a2', 'a3']
     mol.GetBonds.return_value = ['b1', 'b2']
 
-    removeHs = mocker.patch('conformer_rl.environments.environment_components.obs_mixins.Chem.rdmolops.RemoveHs')
+    removeHs = mocker.patch('idp_rl.environments.environment_components.obs_mixins.Chem.rdmolops.RemoveHs')
     removeHs.return_value = mol
-    atom_type = mocker.patch('conformer_rl.environments.environment_components.obs_mixins.molecule_features.atom_type_CO')
+    atom_type = mocker.patch('idp_rl.environments.environment_components.obs_mixins.molecule_features.atom_type_CO')
     atom_type.side_effect = atype
-    bond_type = mocker.patch('conformer_rl.environments.environment_components.obs_mixins.molecule_features.bond_type')
+    bond_type = mocker.patch('idp_rl.environments.environment_components.obs_mixins.molecule_features.bond_type')
     bond_type.side_effect = btype
-    atom_coords = mocker.patch('conformer_rl.environments.environment_components.obs_mixins.molecule_features.atom_coords')
+    atom_coords = mocker.patch('idp_rl.environments.environment_components.obs_mixins.molecule_features.atom_coords')
     atom_coords.side_effect = acoords
-    bond_pairs = mocker.patch('conformer_rl.environments.environment_components.molecule_features.get_bond_pairs')
+    bond_pairs = mocker.patch('idp_rl.environments.environment_components.molecule_features.get_bond_pairs')
     bond_pairs.return_value = [[0, 1, 1, 2, 2, 0], [1, 0, 2, 1, 0, 2]]
 
     env = AtomCoordsTypeGraphObsMixin()

@@ -1,4 +1,4 @@
-from conformer_rl.environments.simple_vec_env import SimpleVecEnv
+from idp_rl.environments.simple_vec_env import SimpleVecEnv
 
 class DummyEnv:
     def __init__(self):

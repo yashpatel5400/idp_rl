@@ -1,8 +1,8 @@
-from conformer_rl.analysis import analysis
+from idp_rl.analysis import analysis
 
 def test_load_pickle(mocker):
-    open = mocker.patch('conformer_rl.analysis.analysis.open')
-    load = mocker.patch('conformer_rl.analysis.analysis.pickle.load')
+    open = mocker.patch('idp_rl.analysis.analysis.open')
+    load = mocker.patch('idp_rl.analysis.analysis.pickle.load')
     file = mocker.Mock()
 
 
@@ -21,7 +21,7 @@ def test_load_data_single(mocker):
             }
         }
         return d[path]
-    pickle = mocker.patch('conformer_rl.analysis.analysis._load_from_pickle')
+    pickle = mocker.patch('idp_rl.analysis.analysis._load_from_pickle')
     pickle.side_effect = load_pickle
 
     data = analysis.load_data_from_pickle(paths = ['path1'])
@@ -49,7 +49,7 @@ def test_load_data_multiple(mocker):
 
         return d[path]
 
-    pickle = mocker.patch('conformer_rl.analysis.analysis._load_from_pickle')
+    pickle = mocker.patch('idp_rl.analysis.analysis._load_from_pickle')
     pickle.side_effect = load_pickle
     data = analysis.load_data_from_pickle(paths = ['data1', 'data2', 'data3'], indices = ['PPO', 'PPO_recurrent', 'A2C'])
     assert data == {

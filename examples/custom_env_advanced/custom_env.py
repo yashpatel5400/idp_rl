@@ -2,12 +2,12 @@ import numpy as np
 import torch
 import gym
 
-import conformer_rl
-from conformer_rl.environments import ConformerEnv
-from conformer_rl.utils import get_conformer_energy
+import idp_rl
+from idp_rl.environments import ConformerEnv
+from idp_rl.utils import get_conformer_energy
 
 class CustomEnv1(ConformerEnv):
-    def __init__(self, mol_config: conformer_rl.config.MolConfig, max_steps: int):
+    def __init__(self, mol_config: idp_rl.config.MolConfig, max_steps: int):
         super().__init__(mol_config, max_steps)
 
         # ensure that mol_config has energy_thresh attribute

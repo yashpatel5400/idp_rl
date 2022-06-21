@@ -1,5 +1,5 @@
-import conformer_rl
-from conformer_rl.agents.base_agent import BaseAgent
+import idp_rl
+from idp_rl.agents.base_agent import BaseAgent
 import sys
 import pytest
 
@@ -19,12 +19,12 @@ def test_init(mocker):
     tag = 'tag'
     data_dir = 'data'
 
-    mocker.patch('conformer_rl.agents.base_agent.EnvLogger', autospec=True)
-    mocker.patch('conformer_rl.agents.base_agent.TrainLogger', autospec=True)
-    mocker.patch('conformer_rl.agents.base_agent.Storage', autospec=True)
-    mocker.patch('conformer_rl.agents.base_agent.current_time', return_value='time')
-    mocker.patch('conformer_rl.agents.base_agent.load_model')
-    mocker.patch('conformer_rl.agents.base_agent.save_model')
+    mocker.patch('idp_rl.agents.base_agent.EnvLogger', autospec=True)
+    mocker.patch('idp_rl.agents.base_agent.TrainLogger', autospec=True)
+    mocker.patch('idp_rl.agents.base_agent.Storage', autospec=True)
+    mocker.patch('idp_rl.agents.base_agent.current_time', return_value='time')
+    mocker.patch('idp_rl.agents.base_agent.load_model')
+    mocker.patch('idp_rl.agents.base_agent.save_model')
 
     config = mocker.Mock()
     config.task
@@ -36,10 +36,10 @@ def test_init(mocker):
     config.network.parameters.return_value = 'params'
 
     agent = BaseAgent(config)
-    conformer_rl.agents.base_agent.Storage.assert_called_with(7, 5)
-    conformer_rl.agents.base_agent.EnvLogger.assert_called_with(unique_tag, data_dir)
+    idp_rl.agents.base_agent.Storage.assert_called_with(7, 5)
+    idp_rl.agents.base_agent.EnvLogger.assert_called_with(unique_tag, data_dir)
     config.optimizer_fn.assert_called_with('params')
-    conformer_rl.agents.base_agent.TrainLogger.assert_called_with(unique_tag, data_dir, False, False, False)
+    idp_rl.agents.base_agent.TrainLogger.assert_called_with(unique_tag, data_dir, False, False, False)
 
 def test_run_steps(mocker):
 
@@ -55,11 +55,11 @@ def test_run_steps(mocker):
     evaluate = mocker.Mock()
     step = mocker.spy(sys.modules[__name__], 'mock_step')
 
-    mocker.patch.object(conformer_rl.agents.base_agent.BaseAgent, '__init__', mock_init)
-    mocker.patch.object(conformer_rl.agents.base_agent.BaseAgent, 'save', save)
-    mocker.patch.object(conformer_rl.agents.base_agent.BaseAgent, 'evaluate', evaluate)
-    mocker.patch.object(conformer_rl.agents.base_agent.BaseAgent, 'step', mock_step)
-    mocker.patch('conformer_rl.agents.base_agent.mkdir')
+    mocker.patch.object(idp_rl.agents.base_agent.BaseAgent, '__init__', mock_init)
+    mocker.patch.object(idp_rl.agents.base_agent.BaseAgent, 'save', save)
+    mocker.patch.object(idp_rl.agents.base_agent.BaseAgent, 'evaluate', evaluate)
+    mocker.patch.object(idp_rl.agents.base_agent.BaseAgent, 'step', mock_step)
+    mocker.patch('idp_rl.agents.base_agent.mkdir')
 
     agent = BaseAgent()
     agent.config = config
@@ -70,25 +70,25 @@ def test_run_steps(mocker):
     assert(save.call_count == 2)
     assert(evaluate.call_count == 2)
     assert(task.close.call_count == 1)
-    conformer_rl.agents.base_agent.mkdir.assert_called_with('test_dir/models/unique_tag')
+    idp_rl.agents.base_agent.mkdir.assert_called_with('test_dir/models/unique_tag')
 
 def test_save_load(mocker):
-    mocker.patch.object(conformer_rl.agents.base_agent.BaseAgent, '__init__', mock_init)
-    mocker.patch('conformer_rl.agents.base_agent.save_model')
-    mocker.patch('conformer_rl.agents.base_agent.load_model')
+    mocker.patch.object(idp_rl.agents.base_agent.BaseAgent, '__init__', mock_init)
+    mocker.patch('idp_rl.agents.base_agent.save_model')
+    mocker.patch('idp_rl.agents.base_agent.load_model')
 
     filename = 'file'
     agent = BaseAgent()
     agent.network = 'network'
 
     agent.save(filename)
-    conformer_rl.agents.base_agent.save_model.assert_called_with(agent.network, filename)
+    idp_rl.agents.base_agent.save_model.assert_called_with(agent.network, filename)
     agent.load(filename)
-    conformer_rl.agents.base_agent.load_model.assert_called_with(agent.network, filename)
+    idp_rl.agents.base_agent.load_model.assert_called_with(agent.network, filename)
 
 def test_save_evaluate(mocker):
-    mocker.patch.object(conformer_rl.agents.base_agent.BaseAgent, '__init__', mock_init)
-    mocker.patch('conformer_rl.agents.base_agent.to_np')
+    mocker.patch.object(idp_rl.agents.base_agent.BaseAgent, '__init__', mock_init)
+    mocker.patch('idp_rl.agents.base_agent.to_np')
 
     network = mocker.Mock()
     network.return_value = {'a': 'action'}
@@ -113,13 +113,13 @@ def test_save_evaluate(mocker):
 
     assert(config.eval_env.reset.call_count == 4)
     network.assert_called_with('reset_state')
-    conformer_rl.agents.base_agent.to_np.assert_called_with('action')
+    idp_rl.agents.base_agent.to_np.assert_called_with('action')
     eval_logger.log_episode.assert_called_with({'total_rewards': 100})
     eval_logger.save_episode.assert_called_with('agent_step_59/ep_3', save_molecules=True)
     train_logger.add_scalar.assert_called_with('episodic_return_eval', 100, 59)
 
 def test_unimplemented(mocker):
-    mocker.patch.object(conformer_rl.agents.base_agent.BaseAgent, '__init__', mock_init)
+    mocker.patch.object(idp_rl.agents.base_agent.BaseAgent, '__init__', mock_init)
     agent = BaseAgent()
 
     with pytest.raises(NotImplementedError):

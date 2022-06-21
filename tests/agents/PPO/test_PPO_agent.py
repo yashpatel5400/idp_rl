@@ -1,16 +1,16 @@
-import conformer_rl
+import idp_rl
 import torch
-from conformer_rl.agents.PPO.PPO_agent import PPOAgent
+from idp_rl.agents.PPO.PPO_agent import PPOAgent
 
 def mock_init(self):
     pass
 
 def test_step(mocker):
-    mocker.patch('conformer_rl.agents.PPO.PPO_agent.PPOAgent.__init__', mock_init)
-    no_grad = mocker.patch('conformer_rl.agents.PPO.PPO_agent.torch.no_grad')
-    sample = mocker.patch('conformer_rl.agents.PPO.PPO_agent.PPOAgent._sample')
-    advantages = mocker.patch('conformer_rl.agents.PPO.PPO_agent.PPOAgent._calculate_advantages')
-    train = mocker.patch('conformer_rl.agents.PPO.PPO_agent.PPOAgent._train')
+    mocker.patch('idp_rl.agents.PPO.PPO_agent.PPOAgent.__init__', mock_init)
+    no_grad = mocker.patch('idp_rl.agents.PPO.PPO_agent.torch.no_grad')
+    sample = mocker.patch('idp_rl.agents.PPO.PPO_agent.PPOAgent._sample')
+    advantages = mocker.patch('idp_rl.agents.PPO.PPO_agent.PPOAgent._calculate_advantages')
+    train = mocker.patch('idp_rl.agents.PPO.PPO_agent.PPOAgent._train')
 
     agent = PPOAgent()
     agent.storage = mocker.Mock()
@@ -24,14 +24,14 @@ def test_step(mocker):
 
 
 def test_train1(mocker):
-    mocker.patch('conformer_rl.agents.PPO.PPO_agent.PPOAgent.__init__', mock_init)
+    mocker.patch('idp_rl.agents.PPO.PPO_agent.PPOAgent.__init__', mock_init)
     backward = mocker.patch('torch.Tensor.backward')
-    nn = mocker.patch('conformer_rl.agents.PPO.PPO_agent.nn')
+    nn = mocker.patch('idp_rl.agents.PPO.PPO_agent.nn')
 
     def same(arg):
         return arg
 
-    mocker.patch('conformer_rl.agents.PPO.PPO_agent.np.random.permutation', same)
+    mocker.patch('idp_rl.agents.PPO.PPO_agent.np.random.permutation', same)
 
     config = mocker.Mock()
     config.rollout_length = 2
@@ -94,14 +94,14 @@ def test_train1(mocker):
     assert(backward.call_count == 2)
 
 def test_train2(mocker):
-    mocker.patch('conformer_rl.agents.PPO.PPO_agent.PPOAgent.__init__', mock_init)
+    mocker.patch('idp_rl.agents.PPO.PPO_agent.PPOAgent.__init__', mock_init)
     backward = mocker.patch('torch.Tensor.backward')
-    nn = mocker.patch('conformer_rl.agents.PPO.PPO_agent.nn')
+    nn = mocker.patch('idp_rl.agents.PPO.PPO_agent.nn')
 
     def same(arg):
         return arg
 
-    mocker.patch('conformer_rl.agents.PPO.PPO_agent.np.random.permutation', same)
+    mocker.patch('idp_rl.agents.PPO.PPO_agent.np.random.permutation', same)
 
     config = mocker.Mock()
     config.rollout_length = 2

@@ -1,5 +1,5 @@
-import conformer_rl
-from conformer_rl.agents.base_ac_agent_recurrent import BaseACAgentRecurrent
+import idp_rl
+from idp_rl.agents.base_ac_agent_recurrent import BaseACAgentRecurrent
 import numpy as np
 import pytest
 import torch
@@ -15,7 +15,7 @@ def test_init(mocker):
         self.network = mocker.Mock(return_value = ('.', (torch.rand(2, 4), torch.rand(5, 8))))
 
 
-    mocker.patch('conformer_rl.agents.base_ac_agent_recurrent.BaseACAgent.__init__', inner_mock_init)
+    mocker.patch('idp_rl.agents.base_ac_agent_recurrent.BaseACAgent.__init__', inner_mock_init)
 
     config = mocker.Mock()
     config.recurrence = 10
@@ -28,23 +28,23 @@ def test_init(mocker):
     
 def test_step(mocker):
     storage = mocker.Mock()
-    mocker.patch.object(conformer_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent, '__init__', mock_init)
-    mocker.patch('conformer_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._sample')
-    mocker.patch('conformer_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._calculate_advantages')
-    mocker.patch('conformer_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._train')
+    mocker.patch.object(idp_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent, '__init__', mock_init)
+    mocker.patch('idp_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._sample')
+    mocker.patch('idp_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._calculate_advantages')
+    mocker.patch('idp_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._train')
 
     agent = BaseACAgentRecurrent()
     agent.storage = storage
     agent.step()
 
-    conformer_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._sample.assert_called_once()
-    conformer_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._calculate_advantages.assert_called_once()
-    conformer_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._train.assert_called_once()
+    idp_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._sample.assert_called_once()
+    idp_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._calculate_advantages.assert_called_once()
+    idp_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent._train.assert_called_once()
     storage.reset.assert_called_once()
 
 def test_sample(mocker):
-    mocker.patch.object(conformer_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent, '__init__', mock_init)
-    mocker.patch('conformer_rl.agents.base_ac_agent_recurrent.to_np')
+    mocker.patch.object(idp_rl.agents.base_ac_agent_recurrent.BaseACAgentRecurrent, '__init__', mock_init)
+    mocker.patch('idp_rl.agents.base_ac_agent_recurrent.to_np')
 
     storage = mocker.Mock()
 

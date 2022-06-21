@@ -1,4 +1,4 @@
-from conformer_rl.molecule_generation.generate_alkanes import generate_branched_alkane
+from idp_rl.molecule_generation.generate_alkanes import generate_branched_alkane
 
 
 def test_branched_alkane(mocker):

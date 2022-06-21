@@ -1,6 +1,6 @@
-import conformer_rl
+import idp_rl
 import torch
-from conformer_rl.agents.PPO.PPO_recurrent_agent import PPORecurrentAgent
+from idp_rl.agents.PPO.PPO_recurrent_agent import PPORecurrentAgent
 
 def mock_init(self):
     pass
@@ -8,7 +8,7 @@ def mock_init(self):
 def test_init(mocker):
     def inner_init(self, config):
         self.recurrence = 6
-    mocker.patch('conformer_rl.agents.PPO.PPO_recurrent_agent.BaseACAgentRecurrent.__init__', inner_init)
+    mocker.patch('idp_rl.agents.PPO.PPO_recurrent_agent.BaseACAgentRecurrent.__init__', inner_init)
     config = mocker.Mock()
     config.rollout_length = 12
     config.mini_batch_size = 18
@@ -16,14 +16,14 @@ def test_init(mocker):
     agent = PPORecurrentAgent(config)
 
 def test_train1(mocker):
-    mocker.patch('conformer_rl.agents.PPO.PPO_recurrent_agent.PPORecurrentAgent.__init__', mock_init)
+    mocker.patch('idp_rl.agents.PPO.PPO_recurrent_agent.PPORecurrentAgent.__init__', mock_init)
     backward = mocker.patch('torch.Tensor.backward')
-    nn = mocker.patch('conformer_rl.agents.PPO.PPO_recurrent_agent.nn')
+    nn = mocker.patch('idp_rl.agents.PPO.PPO_recurrent_agent.nn')
 
     def same(arg):
         return arg
 
-    mocker.patch('conformer_rl.agents.PPO.PPO_recurrent_agent.np.random.permutation', same)
+    mocker.patch('idp_rl.agents.PPO.PPO_recurrent_agent.np.random.permutation', same)
 
     config = mocker.Mock()
     config.rollout_length = 2
@@ -89,14 +89,14 @@ def test_train1(mocker):
     assert(backward.call_count == 2)
 
 def test_train2(mocker):
-    mocker.patch('conformer_rl.agents.PPO.PPO_recurrent_agent.PPORecurrentAgent.__init__', mock_init)
+    mocker.patch('idp_rl.agents.PPO.PPO_recurrent_agent.PPORecurrentAgent.__init__', mock_init)
     backward = mocker.patch('torch.Tensor.backward')
-    nn = mocker.patch('conformer_rl.agents.PPO.PPO_recurrent_agent.nn')
+    nn = mocker.patch('idp_rl.agents.PPO.PPO_recurrent_agent.nn')
 
     def same(arg):
         return arg
 
-    mocker.patch('conformer_rl.agents.PPO.PPO_recurrent_agent.np.random.permutation', same)
+    mocker.patch('idp_rl.agents.PPO.PPO_recurrent_agent.np.random.permutation', same)
 
     config = mocker.Mock()
     config.rollout_length = 2
@@ -153,14 +153,14 @@ def test_train2(mocker):
     assert(abs(args_list[4][0][1].item() - 1669.12793) < 1e-3)
 
 def test_train1_recurrent(mocker):
-    mocker.patch('conformer_rl.agents.PPO.PPO_recurrent_agent.PPORecurrentAgent.__init__', mock_init)
+    mocker.patch('idp_rl.agents.PPO.PPO_recurrent_agent.PPORecurrentAgent.__init__', mock_init)
     backward = mocker.patch('torch.Tensor.backward')
-    nn = mocker.patch('conformer_rl.agents.PPO.PPO_recurrent_agent.nn')
+    nn = mocker.patch('idp_rl.agents.PPO.PPO_recurrent_agent.nn')
 
     def same(arg):
         return arg
 
-    mocker.patch('conformer_rl.agents.PPO.PPO_recurrent_agent.np.random.permutation', same)
+    mocker.patch('idp_rl.agents.PPO.PPO_recurrent_agent.np.random.permutation', same)
 
     config = mocker.Mock()
     config.rollout_length = 2

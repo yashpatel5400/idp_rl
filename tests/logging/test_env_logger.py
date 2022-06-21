@@ -1,5 +1,5 @@
-import conformer_rl
-from conformer_rl.logging.env_logger import EnvLogger
+import idp_rl
+from idp_rl.logging.env_logger import EnvLogger
 
 def test_basic(mocker):
     logger = EnvLogger(tag = "tag")
@@ -37,10 +37,10 @@ def test_basic(mocker):
 def test_save(mocker):
     logger = EnvLogger(tag = "tag")
 
-    mkd = mocker.patch('conformer_rl.logging.env_logger.mkdir')
-    pickle = mocker.patch('conformer_rl.logging.env_logger.pickle')
-    chem = mocker.patch('conformer_rl.logging.env_logger.Chem')
-    open = mocker.patch('conformer_rl.logging.env_logger.open')
+    mkd = mocker.patch('idp_rl.logging.env_logger.mkdir')
+    pickle = mocker.patch('idp_rl.logging.env_logger.pickle')
+    chem = mocker.patch('idp_rl.logging.env_logger.Chem')
+    open = mocker.patch('idp_rl.logging.env_logger.open')
 
     open.return_value = mocker.Mock()
 
