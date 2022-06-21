@@ -17,35 +17,37 @@ def np_to_mm(arr: np.ndarray, unit: openmm.unit=openmm.unit.angstrom):
     return wrapped_val
 
 def test_seed_charmm(mocker):
-    charmm_utils.seed_charmm_simulator(chignolin_psf_fn, toppar_filenames)
+    charmm_utils.CharmmSim(chignolin_psf_fn, toppar_filenames)
 
 def test_charmm_energy(mocker):
+    charmm_sim = charmm_utils.CharmmSim(chignolin_psf_fn, toppar_filenames)
     chignolin_pdb_fn = "idp_rl/molecule_generation/chignolin/1uao.pdb"
     
     # test from RDKit and compare with ParmEd to ensure no issue with reading
     chignolin = Chem.rdmolfiles.MolFromPDBFile(chignolin_pdb_fn, removeHs=False)
     conf = chignolin.GetConformer(0)
     positions = np_to_mm(conf.GetPositions())
-    chignolin_energy = charmm_utils.charmm_energy(chignolin_psf_fn, toppar_filenames, positions)
+    chignolin_energy = charmm_sim.conf_energy(positions)
 
     pmd_chignolin = pmd.load_file(chignolin_pdb_fn)
     pmd_np_pos = pmd_chignolin.positions
-    pmd_chignolin_energy = charmm_utils.charmm_energy(chignolin_psf_fn, toppar_filenames, pmd_np_pos)
+    pmd_chignolin_energy = charmm_sim.conf_energy(pmd_np_pos)
 
     assert(np.isclose(chignolin_energy._value, 1881.096))
     assert(np.isclose(chignolin_energy._value, pmd_chignolin_energy._value))
 
 def test_charmm_opt(mocker):
-    chignolin_pdb_fn = "idp_rl/molecule_generation/chignolin/1uao.pdb"
+    charmm_sim = charmm_utils.CharmmSim(chignolin_psf_fn, toppar_filenames)
     
     # test from RDKit and compare with ParmEd to ensure no issue with reading
+    chignolin_pdb_fn = "idp_rl/molecule_generation/chignolin/1uao.pdb"
     chignolin = Chem.rdmolfiles.MolFromPDBFile(chignolin_pdb_fn, removeHs=False)
     conf = chignolin.GetConformer(0)
     positions = np_to_mm(conf.GetPositions())
-    optimized_pos = charmm_utils.charmm_optimize_conf(chignolin_psf_fn, toppar_filenames, positions)
+    optimized_pos = charmm_sim.optimize_conf(positions)
     
-    pre_chignolin_energy = charmm_utils.charmm_energy(chignolin_psf_fn, toppar_filenames, positions)
-    opt_chignolin_energy = charmm_utils.charmm_energy(chignolin_psf_fn, toppar_filenames, optimized_pos)
+    pre_chignolin_energy = charmm_sim.conf_energy(positions)
+    opt_chignolin_energy = charmm_sim.conf_energy(optimized_pos)
 
     assert(opt_chignolin_energy._value < pre_chignolin_energy._value)    
     opt_thresh = 65 # optimization should minimize to a value < 65 (usually between 50-60)

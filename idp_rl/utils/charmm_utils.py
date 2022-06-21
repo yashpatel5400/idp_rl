@@ -12,39 +12,30 @@ import numpy as np
 
 from typing import Tuple, List
 
-charmm_simulator = None
+class CharmmSim:
+    def __init__(self, psf_fn: str, toppar_filenames: List[str]):
+        openmm_toppar = app.CharmmParameterSet(*toppar_filenames)
+        openmm_psf = app.CharmmPsfFile(psf_fn)
+        openmm_system = openmm_psf.createSystem(openmm_toppar)
 
-def seed_charmm_simulator(psf_fn: str, toppar_filenames: List[str]):
-    global charmm_simulator
-    if charmm_simulator is not None:
-        return
+        # TODO: test GPU version simulator
+        integrator = openmm.VerletIntegrator(1.0)
 
-    openmm_toppar = app.CharmmParameterSet(*toppar_filenames)
-    openmm_psf = app.CharmmPsfFile(psf_fn)
-    openmm_system = openmm_psf.createSystem(openmm_toppar)
+        if torch.cuda.is_available():
+            platform = openmm.Platform.getPlatformByName("CUDA")
+            prop = dict(CudaPrecision="mixed")
+            self.simulator = app.Simulation(psf.topology, system, integrator, platform, prop)
+        else:
+            platform = openmm.Platform.getPlatformByName("CPU")
+            self.simulator = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform)
 
-    # TODO: test GPU version simulator
-    integrator = openmm.VerletIntegrator(1.0)
+    def conf_energy(self, positions: openmm.unit.quantity.Quantity):
+        self.simulator.context.setPositions(positions)
+        energy = self.simulator.context.getState(getEnergy=True).getPotentialEnergy()
+        return energy
 
-    if torch.cuda.is_available():
-        platform = openmm.Platform.getPlatformByName("CUDA")
-        prop = dict(CudaPrecision="mixed")
-        charmm_simulator = app.Simulation(psf.topology, system, integrator, platform, prop)
-    else:
-        platform = openmm.Platform.getPlatformByName("CPU")
-        charmm_simulator = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform)
-
-def charmm_energy(psf_fn: str, toppar_filenames: List[str], positions: openmm.unit.quantity.Quantity):
-    seed_charmm_simulator(psf_fn, toppar_filenames)
-    global charmm_simulator
-    charmm_simulator.context.setPositions(positions)
-    energy = charmm_simulator.context.getState(getEnergy=True).getPotentialEnergy()
-    return energy
-
-def charmm_optimize_conf(psf_fn: str, toppar_filenames: List[str], positions: openmm.unit.quantity.Quantity):
-    seed_charmm_simulator(psf_fn, toppar_filenames)
-    global charmm_simulator
-    charmm_simulator.context.setPositions(positions)
-    charmm_simulator.minimizeEnergy(maxIterations=500)
-    optimized_positions = charmm_simulator.context.getState(getPositions=True).getPositions()
-    return optimized_positions
+    def optimize_conf(self, positions: openmm.unit.quantity.Quantity):
+        self.simulator.context.setPositions(positions)
+        self.simulator.minimizeEnergy(maxIterations=500)
+        optimized_positions = self.simulator.context.getState(getPositions=True).getPositions()
+        return optimized_positions
