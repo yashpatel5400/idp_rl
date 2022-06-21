@@ -8,6 +8,7 @@ import torch
 import openmm
 import openmm.app as app
 import openmm.unit as u
+import numpy as np
 
 from typing import Tuple, List
 
@@ -33,17 +34,23 @@ def seed_charmm_simulator(psf_fn: str, toppar_filenames: List[str]):
         platform = openmm.Platform.getPlatformByName("CPU")
         charmm_simulator = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform)
     
-def charmm_energy(psf_fn: str, positions):
-    seed_charmm_simulator(psf_fn)
+def np_to_mm(arr: np.ndarray, unit: openmm.unit=openmm.unit.angstrom):
+    wrapped_val = openmm.unit.quantity.Quantity(arr, unit)
+    return wrapped_val
+
+def charmm_energy(psf_fn: str, toppar_filenames: List[str], positions: np.ndarray):
+    seed_charmm_simulator(psf_fn, toppar_filenames)
     global charmm_simulator
-    charmm_simulator.context.setPositions(positions)
-    energy = simulation.context.getState(getEnergy=True).getPotentialEnergy()
+    mm_pos = np_to_mm(positions)
+    charmm_simulator.context.setPositions(mm_pos)
+    energy = charmm_simulator.context.getState(getEnergy=True).getPotentialEnergy()
     return energy
 
-def charmm_optimize_conf(psf_fn: str, positions):
-    seed_charmm_simulator(psf_fn)
+def charmm_optimize_conf(psf_fn: str, toppar_filenames: List[str], positions: np.ndarray):
+    seed_charmm_simulator(psf_fn, toppar_filenames)
     global charmm_simulator
-    charmm_simulator.context.setPositions(positions)
-    simulation.minimizeEnergy(maxIterations=500)
-    optimized_positions = simulation.context.getState(getPositions=True).getPositions()
+    mm_pos = np_to_mm(positions)
+    charmm_simulator.context.setPositions(mm_pos)
+    charmm_simulator.minimizeEnergy(maxIterations=500)
+    optimized_positions = charmm_simulator.context.getState(getPositions=True).getPositions()
     return optimized_positions
