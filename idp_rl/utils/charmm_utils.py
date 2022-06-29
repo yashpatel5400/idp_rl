@@ -67,7 +67,7 @@ class MMFFMixin:
     def _seed(self, psf_fn: str, toppar_filenames: List[str]):
         pass
 
-    def _get_conformer_energy(mol: Chem.Mol, confId: int = None) -> float:
+    def _get_conformer_energy(self, mol: Chem.Mol, confId: int = None) -> float:
         """Returns the energy of the conformer with `confId` in `mol`.
         """
         if confId is None:
@@ -78,8 +78,7 @@ class MMFFMixin:
         energy = ff.CalcEnergy()
         return energy
 
-    def optimize_conf(self, positions: openmm.unit.quantity.Quantity):
-        self.simulator.context.setPositions(positions)
-        self.simulator.minimizeEnergy(maxIterations=500)
-        optimized_positions = self.simulator.context.getState(getPositions=True).getPositions()
-        return optimized_positions
+    def _optimize_conf(self, mol: Chem.Mol, confId: int = None):
+        if confId is None:
+            confId = mol.GetNumConformers() - 1
+        Chem.MMFFOptimizeMolecule(mol, confId=confId, maxIters=500, nonBondedThresh=10)
