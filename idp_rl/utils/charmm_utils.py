@@ -10,6 +10,7 @@ import openmm
 import openmm.app as app
 import openmm.unit as u
 import rdkit.Chem.AllChem as Chem
+from rdkit.Geometry import Point3D
 
 from typing import Tuple, List
 
@@ -17,7 +18,7 @@ def np_to_mm(arr: np.ndarray, unit: openmm.unit=u.angstrom):
     wrapped_val = openmm.unit.quantity.Quantity(arr, unit)
     return wrapped_val
 
-class CharmmSim:
+class CharMMMixin:
     def _seed(self, psf_fn: str, toppar_filenames: List[str]):
         openmm_toppar = app.CharmmParameterSet(*toppar_filenames)
         openmm_psf = app.CharmmPsfFile(psf_fn)
@@ -34,13 +35,23 @@ class CharmmSim:
             platform = openmm.Platform.getPlatformByName("CPU")
             self.simulator = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform)
 
-    def _get_conformer_energy(self, conf: Chem.rdchem.Conformer):
+    def _get_conformer_energy(self, mol: Chem.Mol, confId: int = None) -> float:
+        """Returns the energy of the conformer with `confId` in `mol`.
+        """
+        if confId is None:
+            confId = mol.GetNumConformers() - 1
+        conf = mol.GetConformer(confId)
+
         positions = np_to_mm(conf.GetPositions())
         self.simulator.context.setPositions(positions)
         energy = self.simulator.context.getState(getEnergy=True).getPotentialEnergy()
         return energy
 
-    def _optimize_conf(self, conf: Chem.rdchem.Conformer):
+    def _optimize_conf(self, mol: Chem.Mol, confId: int = None):
+        if confId is None:
+            confId = mol.GetNumConformers() - 1
+        conf = mol.GetConformer(confId)
+
         positions = np_to_mm(conf.GetPositions())
         self.simulator.context.setPositions(positions)
         self.simulator.minimizeEnergy(maxIterations=500)
@@ -48,4 +59,27 @@ class CharmmSim:
         # CHARMM returns all of its positions in nm, so we have to convert back to Angstroms for RDKit
         optimized_positions_nm = self.simulator.context.getState(getPositions=True).getPositions()
         optimized_positions = optimized_positions_nm.in_units_of(u.angstrom)
+
+        for i, pos in enumerate(optimized_positions):
+            conf.SetAtomPosition(i, Point3D(pos.x, pos.y, pos.z))
+
+class MMFFMixin:
+    def _seed(self, psf_fn: str, toppar_filenames: List[str]):
+        pass
+
+    def _get_conformer_energy(mol: Chem.Mol, confId: int = None) -> float:
+        """Returns the energy of the conformer with `confId` in `mol`.
+        """
+        if confId is None:
+            confId = mol.GetNumConformers() - 1
+        Chem.MMFFSanitizeMolecule(mol)
+        mmff_props = Chem.MMFFGetMoleculeProperties(mol)
+        ff = Chem.MMFFGetMoleculeForceField(mol, mmff_props, confId=confId)
+        energy = ff.CalcEnergy()
+        return energy
+
+    def optimize_conf(self, positions: openmm.unit.quantity.Quantity):
+        self.simulator.context.setPositions(positions)
+        self.simulator.minimizeEnergy(maxIterations=500)
+        optimized_positions = self.simulator.context.getState(getPositions=True).getPositions()
         return optimized_positions
