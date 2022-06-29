@@ -18,7 +18,7 @@ def np_to_mm(arr: np.ndarray, unit: openmm.unit=u.angstrom):
     return wrapped_val
 
 class CharmmSim:
-    def __init__(self, psf_fn: str, toppar_filenames: List[str]):
+    def _seed(self, psf_fn: str, toppar_filenames: List[str]):
         openmm_toppar = app.CharmmParameterSet(*toppar_filenames)
         openmm_psf = app.CharmmPsfFile(psf_fn)
         openmm_system = openmm_psf.createSystem(openmm_toppar)
@@ -34,13 +34,13 @@ class CharmmSim:
             platform = openmm.Platform.getPlatformByName("CPU")
             self.simulator = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform)
 
-    def conf_energy(self, conf: Chem.rdchem.Conformer):
+    def _get_conformer_energy(self, conf: Chem.rdchem.Conformer):
         positions = np_to_mm(conf.GetPositions())
         self.simulator.context.setPositions(positions)
         energy = self.simulator.context.getState(getEnergy=True).getPotentialEnergy()
         return energy
 
-    def optimize_conf(self, conf: Chem.rdchem.Conformer):
+    def _optimize_conf(self, conf: Chem.rdchem.Conformer):
         positions = np_to_mm(conf.GetPositions())
         self.simulator.context.setPositions(positions)
         self.simulator.minimizeEnergy(maxIterations=500)
