@@ -1,0 +1,38 @@
+import sys
+sys.path.append("../src")
+
+import numpy as np
+import torch
+
+from idp_rl import utils
+from idp_rl.agents import PPORecurrentAgent
+from idp_rl.config import Config
+from idp_rl.environments import Task
+
+from idp_rl.molecule_generation.generate_alkanes import generate_branched_alkane
+from idp_rl.molecule_generation.generate_molecule_config import config_from_rdkit
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+if __name__ == '__main__':
+    utils.set_one_thread()
+
+    # Create config object
+    print("Generating molecule")
+    mol = generate_branched_alkane(14)
+    mol_config = config_from_rdkit(mol, num_conformers=200, calc_normalizers=True, save_file='alkane')
+
+    # Create agent training config object
+    config = Config()
+    config.tag = 'example1'
+
+    # Configure Environment
+    print("Configuring environment")
+    config.train_env = Task('GibbsScorePruningEnvCharmm-v0', concurrency=True, num_envs=5, seed=np.random.randint(0,1e5), mol_config=mol_config)
+    config.eval_env = Task('GibbsScorePruningEnvCharmm-v0', seed=np.random.randint(0,7e4), mol_config=mol_config)
+    config.eval_episodes=10000
+
+    print("Running agent")
+    agent = PPORecurrentAgent(config)
+    agent.run_steps()
