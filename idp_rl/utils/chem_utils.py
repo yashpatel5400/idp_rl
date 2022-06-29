@@ -11,24 +11,18 @@ import rdkit.Chem.AllChem as Chem
 
 from typing import Tuple, List
 import logging
-import enum
 
-class ForceField(enum.Enum):
-    MMFF = "MMFF"
-    CHARMM = "CHARMM"
-
-def get_conformer_energies(mol: Chem.Mol, ff: ForceField=ForceField.MMFF) -> List[float]:
+def get_conformer_energies(mol: Chem.Mol) -> List[float]:
     """Returns a list of energies for each conformer in `mol`.
     """
     energies = []
 
-    if ff == ForceField.MMFF:
-        Chem.MMFFSanitizeMolecule(mol)
-        mmff_props = Chem.MMFFGetMoleculeProperties(mol)
-        for conf in mol.GetConformers():
-            ff = Chem.MMFFGetMoleculeForceField(mol, mmff_props, confId=conf.GetId())
-            energy = ff.CalcEnergy()
-            energies.append(energy)
+    Chem.MMFFSanitizeMolecule(mol)
+    mmff_props = Chem.MMFFGetMoleculeProperties(mol)
+    for conf in mol.GetConformers():
+        ff = Chem.MMFFGetMoleculeForceField(mol, mmff_props, confId=conf.GetId())
+        energy = ff.CalcEnergy()
+        energies.append(energy)
     return np.asarray(energies, dtype=float)
 
 def get_conformer_energy(mol: Chem.Mol, confId: int = None) -> float:
