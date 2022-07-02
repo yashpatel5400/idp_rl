@@ -4,11 +4,13 @@ Molecule Config Generators
 Functions for generating :class:`~idp_rl.config.mol_config.MolConfig` objects given an input molecule.
 """
 from idp_rl.config import MolConfig
-from idp_rl.utils import calculate_normalizers
+from idp_rl.environments.environment_components.forcefield_mixins import CharMMMixin, MMFFMixin
 from rdkit import Chem
 from rdkit.Chem import AllChem
 import logging
 import pickle
+
+from typing import Union, Optional
 
 def test_alkane_config() -> MolConfig:
     config = config_from_smiles("CC(CCC)CCCC(CCCC)CC", num_conformers=200, calc_normalizers=False)
@@ -87,7 +89,7 @@ def config_from_smiles(smiles: str, num_conformers: int, calc_normalizers: bool 
     mol = Chem.MolFromSmiles(smiles)
     return config_from_rdkit(mol, num_conformers, calc_normalizers, pruning_thresh, save_file)
 
-def config_from_rdkit(mol: Chem.rdchem.Mol, num_conformers: int, calc_normalizers: bool = False, pruning_thresh: float=0.05, save_file: str = "") -> MolConfig:
+def config_from_rdkit(mol: Chem.rdchem.Mol, num_conformers: int, calc_normalizers: bool = False, pruning_thresh: float=0.05, save_file: str = "", ff_mixin: Union[MMFFMixin, CharMMMixin] = MMFFMixin()) -> MolConfig:
     """Generates a :class:`~idp_rl.config.mol_config.MolConfig` object for a molecule specified by an rdkit molecule object.
 
     Parameters
@@ -119,11 +121,13 @@ def config_from_rdkit(mol: Chem.rdchem.Mol, num_conformers: int, calc_normalizer
     """
 
     config = MolConfig()
-    mol = _preprocess_mol(mol)
+    if isinstance(ff_mixin, MMFFMixin):
+        mol = _preprocess_mol(mol)
     config.mol = mol
     config.num_conformers = num_conformers
+    config.mol_name = save_file
     if calc_normalizers:
-        config.E0, config.Z0 = calculate_normalizers(mol, num_conformers, pruning_thresh)
+        config.E0, config.Z0 = ff_mixin._calculate_normalizers(mol, num_conformers, pruning_thresh)
 
     logging.info('mol_config object constructed for the following molecule:')
     logging.info(Chem.MolToMolBlock(mol))

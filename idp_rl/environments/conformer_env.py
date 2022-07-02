@@ -8,7 +8,6 @@ import copy
 
 from rdkit.Chem import AllChem as Chem
 from rdkit.Chem import TorsionFingerprints
-from idp_rl.utils import get_conformer_energy
 from idp_rl.config import MolConfig
 
 import logging
@@ -52,14 +51,26 @@ class ConformerEnv(gym.Env):
 
         self.mol = self.config.mol
 
+        self._seed(self.config.mol_name)
+        
         # set mol to have exactly one conformer
         self.mol.RemoveAllConformers()
         if Chem.EmbedMolecule(self.mol, randomSeed=self.config.seed, useRandomCoords=True) == -1:
             raise Exception('Unable to embed molecule with conformer using rdkit')
 
         self.conf = self.mol.GetConformer()
-        nonring, ring = TorsionFingerprints.CalculateTorsionLists(self.mol)
-        self.nonring = [list(atoms[0]) for atoms, ang in nonring]
+
+        # HACK: we only want torsion angles for backbone, but removing Hs changes indices, so we
+        # have to do this hacky process of computing torsion angles in the stripped molecule and then remap them
+        [self.mol.GetAtomWithIdx(i).SetProp("original_index", str(i)) for i in range(self.mol.GetNumAtoms())]
+        backbone = Chem.rdmolops.RemoveHs(self.mol)
+
+        backbone_nonring, _ = TorsionFingerprints.CalculateTorsionLists(backbone)
+        self.nonring_backbone = [list(atoms[0]) for atoms, ang in backbone_nonring]
+        self.nonring_full = [
+            [int(backbone.GetAtomWithIdx(backbone_idx).GetProp("original_index")) for backbone_idx in atom_group] 
+            for atom_group in self.nonring_backbone
+        ]
 
         self.reset()
 
@@ -153,7 +164,7 @@ class ConformerEnv(gym.Env):
 
         * energy (float): the energy of the current conformer
         """
-        energy = get_conformer_energy(self.mol)
+        energy = self._get_conformer_energy(self.mol)
         reward =  np.exp(-1. * energy)
 
         self.step_info['energy'] = energy

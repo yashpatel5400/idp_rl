@@ -6,44 +6,37 @@ import numpy as np
 import openmm
 import rdkit.Chem.AllChem as Chem
 
-chignolin_psf_fn = "idp_rl/molecule_generation/chignolin/1uao.psf"
-toppar_filenames = [
-    "idp_rl/environments/environment_components/toppar/par_all36_prot.prm", 
-    "idp_rl/environments/environment_components/toppar/top_all36_prot.rtf",
-    "idp_rl/environments/environment_components/toppar/toppar_water_ions.str"
-]
-
 def test_seed_charmm(mocker):
     charmm_sim = CharMMMixin()
-    charmm_sim._seed(chignolin_psf_fn, toppar_filenames)
+    charmm_sim._seed("chignolin")
     
 def test_charmm_energy(mocker):
     charmm_sim = CharMMMixin()
-    charmm_sim._seed(chignolin_psf_fn, toppar_filenames)
+    charmm_sim._seed("chignolin")
 
     chignolin = generate_chignolin()
     chignolin_energy = charmm_sim._get_conformer_energy(chignolin, 0)
-    assert(np.isclose(chignolin_energy._value, 1881.096))
+    assert(np.isclose(chignolin_energy, 1881.096))
 
 def test_charmm_opt(mocker):
     charmm_sim = CharMMMixin()
-    charmm_sim._seed(chignolin_psf_fn, toppar_filenames)
+    charmm_sim._seed("chignolin")
     
     chignolin = generate_chignolin()
     pre_chignolin_energy = charmm_sim._get_conformer_energy(chignolin, 0)
     charmm_sim._optimize_conf(chignolin, 0)
     opt_chignolin_energy = charmm_sim._get_conformer_energy(chignolin, 0)
 
-    assert(opt_chignolin_energy._value < pre_chignolin_energy._value)    
+    assert(opt_chignolin_energy < pre_chignolin_energy)    
     opt_thresh = 65 # optimization should minimize to a value < 65 (usually between 50-60)
-    assert(opt_chignolin_energy._value < opt_thresh)
+    assert(opt_chignolin_energy < opt_thresh)
 
 def test_charmm_mmff_compat(mocker):
     charmm_sim = CharMMMixin()
-    charmm_sim._seed(chignolin_psf_fn, toppar_filenames)
+    charmm_sim._seed("chignolin")
     
     mmff_sim = MMFFMixin()
-    mmff_sim._seed(chignolin_psf_fn, toppar_filenames)
+    mmff_sim._seed("chignolin")
 
     chignolin = generate_chignolin()
     charmm_chignolin_energy = charmm_sim._get_conformer_energy(chignolin, 0)

@@ -23,11 +23,12 @@ from idp_rl.environments.curriculum_conformer_env import CurriculumConformerEnv
 from idp_rl.environments.environment_components.action_mixins import ContinuousActionMixin, DiscreteActionMixin
 from idp_rl.environments.environment_components.reward_mixins import GibbsRewardMixin, GibbsPruningRewardMixin, GibbsEndPruningRewardMixin, GibbsLogPruningRewardMixin
 from idp_rl.environments.environment_components.obs_mixins import GraphObsMixin, AtomCoordsTypeGraphObsMixin
+from idp_rl.environments.environment_components.forcefield_mixins import CharMMMixin, MMFFMixin
 
 
 
 
-class DiscreteActionEnv(DiscreteActionMixin, GraphObsMixin, ConformerEnv):
+class DiscreteActionEnv(DiscreteActionMixin, GraphObsMixin, MMFFMixin, ConformerEnv):
     """
     * Action Handler: :class:`~idp_rl.environments.environment_components.action_mixins.DiscreteActionMixin`
     * Reward Handler: default reward handler from :class:`~idp_rl.environments.conformer_env.ConformerEnv`
@@ -36,7 +37,7 @@ class DiscreteActionEnv(DiscreteActionMixin, GraphObsMixin, ConformerEnv):
     pass
 
 
-class GibbsScoreEnv(GibbsRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, ConformerEnv):
+class GibbsScoreEnv(GibbsRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, MMFFMixin, ConformerEnv):
     """
     * Action Handler: :class:`~idp_rl.environments.environment_components.action_mixins.DiscreteActionMixin`
     * Reward Handler: :class:`~idp_rl.environments.environment_components.reward_mixins.GibbsRewardMixin`
@@ -45,7 +46,7 @@ class GibbsScoreEnv(GibbsRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphOb
     pass
 
 
-class GibbsScorePruningEnv(GibbsPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, ConformerEnv):
+class GibbsScorePruningEnv(GibbsPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, MMFFMixin, ConformerEnv):
     """
     * Action Handler: :class:`~idp_rl.environments.environment_components.action_mixins.DiscreteActionMixin`
     * Reward Handler: :class:`~idp_rl.environments.environment_components.reward_mixins.GibbsPruningRewardMixin`
@@ -54,7 +55,7 @@ class GibbsScorePruningEnv(GibbsPruningRewardMixin, DiscreteActionMixin, AtomCoo
     pass
 
 
-class GibbsScoreEndPruningEnv(GibbsEndPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, ConformerEnv):
+class GibbsScoreEndPruningEnv(GibbsEndPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, MMFFMixin, ConformerEnv):
     """
     * Action Handler: :class:`~idp_rl.environments.environment_components.action_mixins.DiscreteActionMixin`
     * Reward Handler: :class:`~idp_rl.environments.environment_components.reward_mixins.GibbsEndPruningRewardMixin`
@@ -63,7 +64,16 @@ class GibbsScoreEndPruningEnv(GibbsEndPruningRewardMixin, DiscreteActionMixin, A
     pass
 
 
-class GibbsScoreLogPruningEnv(GibbsLogPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, ConformerEnv):
+class GibbsScorePruningEnvCharmm(GibbsPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, CharMMMixin, ConformerEnv):
+    """
+    * Action Handler: :class:`~idp_rl.environments.environment_components.action_mixins.DiscreteActionMixin`
+    * Reward Handler: :class:`~idp_rl.environments.environment_components.reward_mixins.GibbsPruningRewardMixin`
+    * Observation Handler: :class:`~idp_rl.environments.environment_components.obs_mixins.AtomCoordsTypeGraphObsMixin`
+    """
+    pass
+
+
+class GibbsScoreLogPruningEnv(GibbsLogPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, MMFFMixin, ConformerEnv):
     """
     * Action Handler: :class:`~idp_rl.environments.environment_components.action_mixins.DiscreteActionMixin`
     * Reward Handler: :class:`~idp_rl.environments.environment_components.reward_mixins.GibbsLogPruningRewardMixin`
@@ -71,8 +81,8 @@ class GibbsScoreLogPruningEnv(GibbsLogPruningRewardMixin, DiscreteActionMixin, A
     """
     pass
 
-class GibbsScorePruningCurriculumEnv(GibbsPruningRewardMixin, AtomCoordsTypeGraphObsMixin, DiscreteActionMixin, CurriculumConformerEnv):
+class GibbsScorePruningCurriculumEnv(GibbsPruningRewardMixin, AtomCoordsTypeGraphObsMixin, DiscreteActionMixin, MMFFMixin, CurriculumConformerEnv):
     """Same handlers as the :class:`~idp_rl.environments.environment.GibbsScorePruningEnv` but with support for curriculum learning."""
 
-class GibbsScoreLogPruningCurriculumEnv(GibbsLogPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, CurriculumConformerEnv):
+class GibbsScoreLogPruningCurriculumEnv(GibbsLogPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, MMFFMixin, CurriculumConformerEnv):
     """Same handlers as the :class:`~idp_rl.environments.environment.GibbsScoreLogPruningEnv` but with support for curriculum learning."""

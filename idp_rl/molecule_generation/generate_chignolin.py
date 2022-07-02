@@ -12,4 +12,3 @@ def generate_chignolin() -> Chem.Mol:
     chignolin = Chem.rdmolfiles.MolFromPDBFile(chignolin_pdb_fn, removeHs=False)
     Chem.SanitizeMol(chignolin)
     return chignolin
-

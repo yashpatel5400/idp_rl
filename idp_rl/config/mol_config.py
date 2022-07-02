@@ -47,3 +47,5 @@ class MolConfig:
 
         # Parameters used for pruning 
         self.pruning_thresh = 0.05
+
+        self.mol_name = ""
