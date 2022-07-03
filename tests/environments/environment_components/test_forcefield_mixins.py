@@ -23,12 +23,15 @@ def test_charmm_opt(mocker):
     charmm_sim._seed("chignolin")
     
     chignolin = generate_chignolin()
+    chignolin.RemoveAllConformers()
+    Chem.EmbedMolecule(chignolin, useRandomCoords=True)
+
     pre_chignolin_energy = charmm_sim._get_conformer_energy(chignolin, 0)
     charmm_sim._optimize_conf(chignolin, 0)
     opt_chignolin_energy = charmm_sim._get_conformer_energy(chignolin, 0)
 
     assert(opt_chignolin_energy < pre_chignolin_energy)    
-    opt_thresh = 65 # optimization should minimize to a value < 65 (usually between 50-60)
+    opt_thresh = 175 # optimization should minimize to a value < 65 (usually between 50-60)
     assert(opt_chignolin_energy < opt_thresh)
 
 def test_charmm_mmff_compat(mocker):

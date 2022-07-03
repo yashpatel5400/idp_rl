@@ -37,7 +37,7 @@ if __name__ == '__main__':
     # create agent config and set environment
     config = Config()
     config.tag = 'chignolin'
-    config.train_env = Task('GibbsScorePruningEnvCharmm-v0', concurrency=True, num_envs=5, mol_config=mol_config)
+    config.train_env = Task('GibbsScorePruningEnvCharmm-v0', concurrency=True, num_envs=1, mol_config=mol_config)
 
     # Neural Network
     config.network = RTGN(6, 128, edge_dim=6, node_dim=5).to(device)
