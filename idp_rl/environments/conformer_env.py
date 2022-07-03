@@ -60,17 +60,10 @@ class ConformerEnv(gym.Env):
 
         self.conf = self.mol.GetConformer()
 
-        # HACK: we only want torsion angles for backbone, but removing Hs changes indices, so we
-        # have to do this hacky process of computing torsion angles in the stripped molecule and then remap them
-        [self.mol.GetAtomWithIdx(i).SetProp("original_index", str(i)) for i in range(self.mol.GetNumAtoms())]
-        backbone = Chem.rdmolops.RemoveHs(self.mol)
-
-        backbone_nonring, _ = TorsionFingerprints.CalculateTorsionLists(backbone)
-        self.nonring_backbone = [list(atoms[0]) for atoms, ang in backbone_nonring]
-        self.nonring_full = [
-            [int(backbone.GetAtomWithIdx(backbone_idx).GetProp("original_index")) for backbone_idx in atom_group] 
-            for atom_group in self.nonring_backbone
-        ]
+        reindexed_mol = Chem.rdmolops.RemoveHs(self.mol)
+        reindexed_mol = Chem.AddHs(reindexed_mol)
+        nonring, ring = TorsionFingerprints.CalculateTorsionLists(reindexed_mol)
+        self.nonring = [list(atoms[0]) for atoms, ang in nonring]
 
         self.reset()
 
@@ -110,6 +103,7 @@ class ConformerEnv(gym.Env):
         assert(self.mol.GetNumConformers() == 1)
 
         obs = self._obs()
+        
         reward = self._reward()
         self.step_info['reward'] = reward
         self.total_reward += reward

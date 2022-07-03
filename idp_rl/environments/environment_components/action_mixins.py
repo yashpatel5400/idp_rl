@@ -28,10 +28,10 @@ class ContinuousActionMixin:
         * conf: the current generated conformer is saved to the episodic mol object.
         """
         conf = self.conf
-        for idx, tors in enumerate(self.nonring_full):
+        for idx, tors in enumerate(self.nonring):
             Chem.rdMolTransforms.SetDihedralDeg(conf, *tors, float(action[idx]))
         self._optimize_conf(self.mol, conf_id=self.mol.GetNumConformers() - 1)
-        self.episode_info['mol'].AddConformer(self.conf, assignId=True)
+        self.episode_info['mol'].AddConformer(self.conf, assignId=True, maxIters=500, nonBondedThresh=10.)
     
 class DiscreteActionMixin:
     """For each torsion of the molecule, modifies the torsion given an angle from a discrete set of possible angles.
@@ -51,8 +51,8 @@ class DiscreteActionMixin:
         
         * conf: the current generated conformer is saved to the episodic mol object.
         """
-        for idx, tors in enumerate(self.nonring_full):
+        for idx, tors in enumerate(self.nonring):
             ang = -180 + 60 * action[idx]
             Chem.rdMolTransforms.SetDihedralDeg(self.conf, *tors, float(ang))
-        self._optimize_conf(self.mol, conf_id=self.mol.GetNumConformers() - 1)
+        self._optimize_conf(self.mol, conf_id=self.mol.GetNumConformers() - 1, maxIters=500, nonBondedThresh=10.)
         self.episode_info['mol'].AddConformer(self.conf, assignId=True)

@@ -144,7 +144,7 @@ class CharMMMixin:
         """
         return np.asarray([self._get_conformer_energy(mol, conf_id) for conf_id in range(mol.GetNumConformers())])
 
-    def _optimize_conf(self, mol: Chem.Mol, conf_id: int = None):
+    def _optimize_conf(self, mol: Chem.Mol, conf_id: int = None, **kwargs):
         if conf_id is None:
             conf_id = mol.GetNumConformers() - 1
         conf = mol.GetConformer(conf_id)
@@ -186,10 +186,10 @@ class MMFFMixin:
         """
         return np.asarray([self._get_conformer_energy(mol, conf_id) for conf_id in range(mol.GetNumConformers())])
 
-    def _optimize_conf(self, mol: Chem.Mol, conf_id: int = None):
+    def _optimize_conf(self, mol: Chem.Mol, conf_id: int = None, **kwargs):
         if conf_id is None:
             conf_id = mol.GetNumConformers() - 1
-        Chem.MMFFOptimizeMolecule(mol, confId=conf_id, maxIters=500, nonBondedThresh=10)
+        Chem.MMFFOptimizeMolecule(mol, confId=conf_id, **kwargs)
 
     def _calculate_normalizers(self, mol: Chem.Mol, num_confs: int = 200, pruning_thresh: float = 0.05):
         return calculate_normalizers(mol, self._optimize_conf, self._get_conformer_energies, num_confs, pruning_thresh)
