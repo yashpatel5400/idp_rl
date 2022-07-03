@@ -122,7 +122,7 @@ class CharMMMixin:
         if torch.cuda.is_available():
             platform = openmm.Platform.getPlatformByName("CUDA")
             prop = dict(CudaPrecision="mixed")
-            self.simulator = app.Simulation(psf.topology, system, integrator, platform, prop)
+            self.simulator = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform, prop)
         else:
             platform = openmm.Platform.getPlatformByName("CPU")
             self.simulator = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform)
