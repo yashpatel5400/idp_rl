@@ -60,11 +60,6 @@ class ConformerEnv(gym.Env):
 
         self.conf = self.mol.GetConformer()
 
-        positions = self.conf.GetPositions()
-        for i in range(self.conf.GetNumAtoms()):
-            perturbed_position = copy.deepcopy(positions[i]) + np.random.random(3) * .5
-            self.conf.SetAtomPosition(i, perturbed_position)
-        
         [self.mol.GetAtomWithIdx(i).SetProp("original_index", str(i)) for i in range(self.mol.GetNumAtoms())]
         reindexed_mol = Chem.rdmolops.RemoveHs(self.mol)
         reindexed_mol = Chem.AddHs(reindexed_mol)
