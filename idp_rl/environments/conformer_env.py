@@ -60,10 +60,16 @@ class ConformerEnv(gym.Env):
 
         self.conf = self.mol.GetConformer()
 
+        [self.mol.GetAtomWithIdx(i).SetProp("original_index", str(i)) for i in range(self.mol.GetNumAtoms())]
         reindexed_mol = Chem.rdmolops.RemoveHs(self.mol)
         reindexed_mol = Chem.AddHs(reindexed_mol)
-        nonring, ring = TorsionFingerprints.CalculateTorsionLists(reindexed_mol)
-        self.nonring = [list(atoms[0]) for atoms, ang in nonring]
+
+        nonring_reindexed, _ = TorsionFingerprints.CalculateTorsionLists(reindexed_mol)
+        self.nonring_reindexed = [list(atoms[0]) for atoms, ang in nonring_reindexed]
+        self.nonring_original = [
+            [int(reindexed_mol.GetAtomWithIdx(reindex).GetProp("original_index")) for reindex in atom_group] 
+            for atom_group in self.nonring_reindexed
+        ]
 
         self.reset()
 

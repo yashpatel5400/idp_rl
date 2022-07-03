@@ -28,7 +28,7 @@ class ContinuousActionMixin:
         * conf: the current generated conformer is saved to the episodic mol object.
         """
         conf = self.conf
-        for idx, tors in enumerate(self.nonring):
+        for idx, tors in enumerate(self.nonring_original):
             Chem.rdMolTransforms.SetDihedralDeg(conf, *tors, float(action[idx]))
         self._optimize_conf(self.mol, conf_id=self.mol.GetNumConformers() - 1)
         self.episode_info['mol'].AddConformer(self.conf, assignId=True, maxIters=500, nonBondedThresh=10.)
@@ -51,7 +51,7 @@ class DiscreteActionMixin:
         
         * conf: the current generated conformer is saved to the episodic mol object.
         """
-        for idx, tors in enumerate(self.nonring):
+        for idx, tors in enumerate(self.nonring_original):
             ang = -180 + 60 * action[idx]
             Chem.rdMolTransforms.SetDihedralDeg(self.conf, *tors, float(ang))
         self._optimize_conf(self.mol, conf_id=self.mol.GetNumConformers() - 1, maxIters=500, nonBondedThresh=10.)

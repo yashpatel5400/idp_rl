@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import random
 
 from idp_rl import utils
 from idp_rl.agents import PPOAgent
@@ -13,19 +14,26 @@ from idp_rl.molecule_generation.generate_molecule_config import config_from_rdki
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 import logging
+import pickle
 logging.basicConfig(level=logging.DEBUG)
+
+random.seed(0)
+np.random.seed(0)
+torch.manual_seed(0)
 
 if __name__ == '__main__':
     utils.set_one_thread()
 
     # configure molecule
     mol = generate_lignin(3)
-    mol_config = config_from_rdkit(mol, calc_normalizers=True, ep_steps=200, save_file='lignin')
+    with open("lignin.pkl", "rb") as f:
+        mol_config = pickle.load(f)
+    # mol_config = config_from_rdkit(mol, num_conformers=100, calc_normalizers=True, save_file='lignin')
 
     # create agent config and set environment
     config = Config()
     config.tag = 'example2'
-    config.train_env = Task('GibbsScorePruningEnv-v0', concurrency=True, num_envs=10, mol_config=mol_config, max_steps=200)
+    config.train_env = Task('GibbsScorePruningEnv-v0', concurrency=True, num_envs=1, mol_config=mol_config)
 
     # Neural Network
     config.network = RTGN(6, 128, edge_dim=6, node_dim=5).to(device)
@@ -37,8 +45,10 @@ if __name__ == '__main__':
 
     # Set up evaluation
     eval_mol = generate_lignin(4)
-    eval_mol_config = config_from_rdkit(mol, calc_normalizers=True, ep_steps=200, save_file='lignin_eval')
-    config.eval_env = Task('GibbsScorePruningEnv-v0', num_envs=1, mol_config=eval_mol_config, max_steps=200)
+    with open("lignin_eval.pkl", "rb") as f:
+        eval_mol_config = pickle.load(f)
+    # eval_mol_config = config_from_rdkit(mol, num_conformers=100, calc_normalizers=True, save_file='lignin_eval')
+    config.eval_env = Task('GibbsScorePruningEnv-v0', num_envs=1, mol_config=eval_mol_config)
     config.eval_interval = 20000
     config.eval_episodes = 2
 

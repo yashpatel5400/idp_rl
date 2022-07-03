@@ -114,7 +114,11 @@ class CharMMMixin:
         charmm_config = charmm_configs[mol_name]
         openmm_toppar = app.CharmmParameterSet(*charmm_config["toppar"])
         openmm_psf = app.CharmmPsfFile(charmm_config["psf"])
-        openmm_system = openmm_psf.createSystem(openmm_toppar)
+        openmm_system = openmm_psf.createSystem(
+            openmm_toppar, 
+            nonbondedMethod=app.PME,
+            nonbondedCutoff=10.0*u.angstroms
+        )
 
         # TODO: test GPU version simulator
         integrator = openmm.VerletIntegrator(1.0)
