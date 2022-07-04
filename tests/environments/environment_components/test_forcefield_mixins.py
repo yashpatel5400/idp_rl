@@ -16,7 +16,7 @@ def test_charmm_energy(mocker):
 
     chignolin = generate_chignolin()
     chignolin_energy = charmm_sim._get_conformer_energy(chignolin, 0)
-    assert(np.isclose(chignolin_energy, 1881.096))
+    assert(np.isclose(chignolin_energy, 449.592))
 
 def test_charmm_opt(mocker):
     charmm_sim = CharMMMixin()
@@ -31,8 +31,9 @@ def test_charmm_opt(mocker):
     opt_chignolin_energy = charmm_sim._get_conformer_energy(chignolin, 0)
 
     assert(opt_chignolin_energy < pre_chignolin_energy)    
-    opt_thresh = 175 # optimization should minimize to a value < 65 (usually between 50-60)
+    opt_thresh = 50 # optimization should minimize to a value < 50 (usually ~40)
     assert(opt_chignolin_energy < opt_thresh)
+    print(opt_chignolin_energy)
 
 def test_charmm_mmff_compat(mocker):
     charmm_sim = CharMMMixin()

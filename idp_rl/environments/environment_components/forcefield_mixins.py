@@ -136,8 +136,9 @@ class CharMMMixin:
 
         positions = np_to_mm(conf.GetPositions())
         self.simulator.context.setPositions(positions)
-        energy = self.simulator.context.getState(getEnergy=True).getPotentialEnergy()
-        return energy._value
+        energy_kj = self.simulator.context.getState(getEnergy=True).getPotentialEnergy()
+        energy_kcal = energy_kj.in_units_of(u.kilocalories_per_mole) # match RDKit/MMFF convention
+        return energy_kcal._value
 
     def _get_conformer_energies(self, mol: Chem.Mol) -> List[float]:
         """Returns a list of energies for each conformer in `mol`.
@@ -155,7 +156,7 @@ class CharMMMixin:
 
         # CHARMM returns all of its positions in nm, so we have to convert back to Angstroms for RDKit
         optimized_positions_nm = self.simulator.context.getState(getPositions=True).getPositions()
-        optimized_positions = optimized_positions_nm.in_units_of(u.angstrom)
+        optimized_positions = optimized_positions_nm.in_units_of(u.angstrom) # match RDKit/MMFF convention
 
         for i, pos in enumerate(optimized_positions):
             conf.SetAtomPosition(i, Point3D(pos.x, pos.y, pos.z))
