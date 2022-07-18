@@ -63,28 +63,17 @@ class ConformerEnv(gym.Env):
         [self.mol.GetAtomWithIdx(i).SetProp("original_index", str(i)) for i in range(self.mol.GetNumAtoms())]
         stripped_mol = Chem.rdmolops.RemoveHs(self.mol)
         
-        alternate_indexing = False
-        if alternate_indexing:
-            reindexed_mol = Chem.AddHs(stripped_mol)
-
-            nonring_reindexed, _ = TorsionFingerprints.CalculateTorsionLists(reindexed_mol)
-            self.nonring_reindexed = [list(atoms[0]) for atoms, ang in nonring_reindexed]
-            self.nonring_original = [
-                [int(reindexed_mol.GetAtomWithIdx(reindex).GetProp("original_index")) for reindex in atom_group] 
-                for atom_group in self.nonring_reindexed
-            ]
-        else:
-            nonring, _ = TorsionFingerprints.CalculateTorsionLists(self.mol)
-            self.nonring_original = [list(atoms[0]) for atoms, ang in nonring]
+        nonring, _ = TorsionFingerprints.CalculateTorsionLists(self.mol)
+        self.nonring_original = [list(atoms[0]) for atoms, ang in nonring]
             
-            original_to_stripped = {
-                int(stripped_mol.GetAtomWithIdx(reindex).GetProp("original_index")) : reindex 
-                for reindex in range(stripped_mol.GetNumAtoms())
-            }
-            self.nonring_reindexed = [
-                [original_to_stripped[original] for original in atom_group] 
-                for atom_group in self.nonring_original
-            ]
+        original_to_stripped = {
+            int(stripped_mol.GetAtomWithIdx(reindex).GetProp("original_index")) : reindex 
+            for reindex in range(stripped_mol.GetNumAtoms())
+        }
+        self.nonring_reindexed = [
+            [original_to_stripped[original] for original in atom_group] 
+            for atom_group in self.nonring_original
+        ]
 
         self.reset()
 

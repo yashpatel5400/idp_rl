@@ -49,7 +49,7 @@ def main(rank, world_size):
     else:
         mol = generate_chignolin()
         ff_mixin = CharMMMixin()
-        ff_mixin._seed(mol_name, rank)
+        ff_mixin._seed(mol_name)
         mol_config = config_from_rdkit(mol, num_conformers=200, calc_normalizers=True, save_file=mol_name, ff_mixin=ff_mixin)
 
     # create agent config and set environment
