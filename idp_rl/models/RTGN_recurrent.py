@@ -48,6 +48,7 @@ class RTGNRecurrent(torch.nn.Module):
         self.actor = _RTGNActorRecurrent(action_dim, hidden_dim, edge_dim=edge_dim, node_dim=node_dim)
         self.critic = _RTGNCriticRecurrent(action_dim, hidden_dim, edge_dim=edge_dim, node_dim=node_dim)
 
+        self.device = None
 
     def forward(self, 
     obs: List[Tuple[Batch, List[List[int]]]], 
@@ -84,8 +85,11 @@ class RTGNRecurrent(torch.nn.Module):
             data_list += b.to_data_list()
             nr_list.append(torch.LongTensor(nr))
 
+        if self.device is None:
+            self.device = next(self.parameters()).device # HACK: is this the best way to make it generic?
+
         data = Batch.from_data_list(data_list)
-        data = data.to(device)
+        data = data.to(self.device)
         N = data.num_graphs
 
         so_far = 0
@@ -98,8 +102,8 @@ class RTGNRecurrent(torch.nn.Module):
             torsion_batch_idx.extend([i]*int(nr_list[i].shape[0]))
             torsion_list_sizes += [nr_list[i].shape[0]]
 
-        nrs = torch.cat(nr_list).to(device)
-        torsion_batch_idx = torch.LongTensor(torsion_batch_idx).to(device)
+        nrs = torch.cat(nr_list).to(self.device)
+        torsion_batch_idx = torch.LongTensor(torsion_batch_idx).to(self.device)
         obs = (data, nrs, torsion_batch_idx, torsion_list_sizes)
 
         if states:
@@ -142,16 +146,20 @@ class _RTGNCriticRecurrent(torch.nn.Module):
         self.mlp = nn.Sequential(nn.Linear(hidden_dim, hidden_dim), nn.ReLU(), nn.Linear(hidden_dim, 1))
 
         self.hidden_dim = hidden_dim
+        self.device = None
 
     def forward(self, obs, states=None):
         data, nonring, nrbidx, torsion_list_sizes = obs
         N = data.num_graphs
 
+        if self.device is None:
+            self.device = next(self.parameters()).device # HACK: is this the best way to make it generic?
+
         if states:
             hx, cx = states
         else:
-            hx = torch.zeros(1, N, self.hidden_dim).to(device)
-            cx = torch.zeros(1, N, self.hidden_dim).to(device)
+            hx = torch.zeros(1, N, self.hidden_dim).to(self.device)
+            cx = torch.zeros(1, N, self.hidden_dim).to(self.device)
 
         out = self.mpnn(data)
         pool = self.set2set(out, data.batch)
@@ -170,16 +178,20 @@ class _RTGNActorRecurrent(torch.nn.Module):
         self.mlp = nn.Sequential(nn.Linear(5*hidden_dim, hidden_dim), nn.ReLU(), nn.Linear(hidden_dim, action_dim))
 
         self.hidden_dim = hidden_dim
+        self.device = None
 
     def forward(self, obs, states=None):
         data, nonring, nrbidx, torsion_list_sizes = obs
         N = data.num_graphs
 
+        if self.device is None:
+            self.device = next(self.parameters()).device # HACK: is this the best way to make it generic?
+
         if states:
             hx, cx = states
         else:
-            hx = torch.zeros(1, N, self.hidden_dim).to(device)
-            cx = torch.zeros(1, N, self.hidden_dim).to(device)
+            hx = torch.zeros(1, N, self.hidden_dim).to(self.device)
+            cx = torch.zeros(1, N, self.hidden_dim).to(self.device)
 
         out = self.mpnn(data)
         pool = self.set2set(out, data.batch)

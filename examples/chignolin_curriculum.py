@@ -9,10 +9,10 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 from idp_rl import utils
-from idp_rl.agents import PPOAgent
+from idp_rl.agents import PPORecurrentExternalCurriculumAgent
 from idp_rl.config import Config
 from idp_rl.environments import Task
-from idp_rl.models import RTGN
+from idp_rl.models import RTGNRecurrent
 from idp_rl.environments.environment_components.forcefield_mixins import CharMMMixin
 
 from idp_rl.molecule_generation.generate_chignolin import generate_chignolin
@@ -56,7 +56,7 @@ def main(rank, world_size):
             mol = generate_chignolin(fasta_str)
             ff_mixin = CharMMMixin()
             ff_mixin._seed(fasta_str)
-            mol_config = config_from_rdkit(mol, num_conformers=200, calc_normalizers=True, save_file=fasta_str, ff_mixin=ff_mixin)
+            mol_config = config_from_rdkit(mol, num_conformers=1000, calc_normalizers=True, save_file=fasta_str, ff_mixin=ff_mixin)
         mol_configs.append(mol_config)
 
     # create agent config and set environment
@@ -94,10 +94,16 @@ def main(rank, world_size):
     config.gradient_clip = 0.5
     config.ppo_ratio_clip = 0.2
 
+    # curriculum Hyperparameters
+    config.curriculum_agent_buffer_len = 20
+    config.curriculum_agent_reward_thresh = 0.4
+    config.curriculum_agent_success_rate = 0.7
+    config.curriculum_agent_fail_rate = 0.2
+
     # Neural Network
     setup(rank, world_size)
     config.device = torch.device(f"cuda:{rank}" if torch.cuda.is_available() else "cpu")
-    config.network = DDP(RTGN(6, 128, edge_dim=6, node_dim=5).to(config.device))
+    config.network = DDP(RTGNRecurrent(6, 128, edge_dim=6, node_dim=5).to(config.device))
 
     total_envs = 24
     envs_per_node = (total_envs // world_size)
@@ -105,11 +111,11 @@ def main(rank, world_size):
 
     torch.manual_seed(envs_per_node * rank + seed)
 
-    agent = PPOAgent(config)
+    agent = PPORecurrentExternalCurriculumAgent(config)
     agent.run_steps()
 
 if __name__ == '__main__':
-    world_size = 1
+    world_size = 6
 
     mp.spawn(main,
         args=(world_size,),
