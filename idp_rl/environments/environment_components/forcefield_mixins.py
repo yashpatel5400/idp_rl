@@ -101,20 +101,15 @@ def prune_conformers(mol: Chem.Mol, get_conformer_energies : Callable, tfd_thres
 
 class CharMMMixin:
     def _seed(self, mol_name):
-        charmm_configs = {
-            "chignolin": {
-                "toppar": [
-                    "idp_rl/environments/environment_components/toppar/par_all36_prot.prm", 
-                    "idp_rl/environments/environment_components/toppar/top_all36_prot.rtf",
-                    "idp_rl/environments/environment_components/toppar/toppar_water_ions.str",
-                ],
-                "psf": "idp_rl/molecule_generation/chignolin/1uao.psf",
-            }
-        }
+        toppar = [
+            "idp_rl/environments/environment_components/toppar/par_all36_prot.prm", 
+            "idp_rl/environments/environment_components/toppar/top_all36_prot.rtf",
+            "idp_rl/environments/environment_components/toppar/toppar_water_ions.str",
+        ]
+        psf = f"idp_rl/molecule_generation/chignolin/{mol_name}.psf" # TODO: expand to non-chignolin
 
-        charmm_config = charmm_configs[mol_name]
-        openmm_toppar = app.CharmmParameterSet(*charmm_config["toppar"])
-        openmm_psf = app.CharmmPsfFile(charmm_config["psf"])
+        openmm_toppar = app.CharmmParameterSet(*toppar)
+        openmm_psf = app.CharmmPsfFile(psf)
         openmm_system = openmm_psf.createSystem(openmm_toppar)
 
         # TODO: test GPU version simulator

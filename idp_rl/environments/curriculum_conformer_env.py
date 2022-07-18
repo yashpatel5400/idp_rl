@@ -51,12 +51,14 @@ class CurriculumConformerEnv(ConformerEnv):
 
         self.config = self.configs[0]
         self.mol = self.config.mol
+
+        self._seed(self.config.mol_name)
+
         self.mol.RemoveAllConformers()
         if Chem.EmbedMolecule(self.mol, randomSeed=self.config.seed, useRandomCoords=True) == -1:
             raise Exception('Unable to embed molecule with conformer using rdkit')
         self.conf = self.mol.GetConformer()
-        nonring, ring = TorsionFingerprints.CalculateTorsionLists(self.mol)
-        self.nonring = [list(atoms[0]) for atoms, ang in nonring]
+        self.setup_torsion_angles()
 
         self.reset()
 
@@ -85,18 +87,36 @@ class CurriculumConformerEnv(ConformerEnv):
         self.config = mol_config
         self.max_steps = mol_config.num_conformers
         self.mol = mol_config.mol
+
+        self._seed(self.config.mol_name)
+
         self.mol.RemoveAllConformers()
         if Chem.EmbedMolecule(self.mol, randomSeed=self.config.seed, useRandomCoords=True) == -1:
             raise Exception('Unable to embed molecule with conformer using rdkit')
         self.conf = self.mol.GetConformer()
-        nonring, ring = TorsionFingerprints.CalculateTorsionLists(self.mol)
-        self.nonring = [list(atoms[0]) for atoms, ang in nonring]
+        self.setup_torsion_angles()
 
         self.episode_info['mol'] = Chem.Mol(self.mol)
         self.episode_info['mol'].RemoveAllConformers()
 
         obs = self._obs()
         return obs
+
+    def setup_torsion_angles(self):
+        [self.mol.GetAtomWithIdx(i).SetProp("original_index", str(i)) for i in range(self.mol.GetNumAtoms())]
+        stripped_mol = Chem.rdmolops.RemoveHs(self.mol)
+
+        nonring, _ = TorsionFingerprints.CalculateTorsionLists(self.mol)
+        self.nonring_original = [list(atoms[0]) for atoms, ang in nonring]
+            
+        original_to_stripped = {
+            int(stripped_mol.GetAtomWithIdx(reindex).GetProp("original_index")) : reindex 
+            for reindex in range(stripped_mol.GetNumAtoms())
+        }
+        self.nonring_reindexed = [
+            [original_to_stripped[original] for original in atom_group] 
+            for atom_group in self.nonring_original
+        ]
 
 
     def increase_level(self):

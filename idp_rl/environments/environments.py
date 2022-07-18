@@ -73,6 +73,14 @@ class GibbsScorePruningEnvCharmm(GibbsPruningRewardMixin, DiscreteActionMixin, A
     pass
 
 
+class GibbsScorePruningEnvCurriculumCharmm(GibbsPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, CharMMMixin, CurriculumConformerEnv):
+    """
+    * Action Handler: :class:`~idp_rl.environments.environment_components.action_mixins.DiscreteActionMixin`
+    * Reward Handler: :class:`~idp_rl.environments.environment_components.reward_mixins.GibbsPruningRewardMixin`
+    * Observation Handler: :class:`~idp_rl.environments.environment_components.obs_mixins.AtomCoordsTypeGraphObsMixin`
+    """
+    pass
+
 class GibbsScoreLogPruningEnv(GibbsLogPruningRewardMixin, DiscreteActionMixin, AtomCoordsTypeGraphObsMixin, MMFFMixin, ConformerEnv):
     """
     * Action Handler: :class:`~idp_rl.environments.environment_components.action_mixins.DiscreteActionMixin`
