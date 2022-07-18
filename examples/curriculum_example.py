@@ -11,7 +11,7 @@ from idp_rl.molecule_generation.generate_alkanes import generate_branched_alkane
 from idp_rl.molecule_generation.generate_molecule_config import config_from_rdkit
 from idp_rl.agents import PPORecurrentExternalCurriculumAgent
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
                                                                                                                                                                                                      
 import logging
 logging.basicConfig(level=logging.DEBUG)

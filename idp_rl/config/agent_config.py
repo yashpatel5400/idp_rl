@@ -103,8 +103,8 @@ class Config:
         # training objects
         self.train_env = None
         self.eval_env = None
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.network = RTGNGatRecurrent(6, 128, node_dim=5).to(self.device)
+        # self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        # self.network = RTGNGatRecurrent(6, 128, node_dim=5).to(self.device)
         self.optimizer_fn = lambda params : torch.optim.Adam(params, lr=1e-5, eps=1e-5)
 
         # batch hyperparameters

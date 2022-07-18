@@ -4,7 +4,7 @@ Base_agent_recurrent
 """
 import torch
 from idp_rl.utils import current_time, load_model, save_model, mkdir, to_np
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 from idp_rl.agents.base_agent import BaseAgent

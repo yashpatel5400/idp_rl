@@ -22,7 +22,7 @@ def _make_env(env_id, seed, rank, **kwargs):
 
     return _thunk
 
-def Task(name: str, concurrency: bool=False, num_envs: int=1, seed: int=np.random.randint(int(1e5)), **kwargs) -> Union[SubprocVecEnv, SimpleVecEnv]:
+def Task(name: str, concurrency: bool=False, num_envs: int=1, seed: int=np.random.randint(int(1e5)), pt_rank=0, **kwargs) -> Union[SubprocVecEnv, SimpleVecEnv]:
     """Returns a wrapper for wrapping multiple environments.
 
     Parameters
@@ -40,5 +40,5 @@ def Task(name: str, concurrency: bool=False, num_envs: int=1, seed: int=np.rando
     -------
     A wrapper for the environment(s).
     """
-    envs = [_make_env(name, seed, i, **kwargs) for i in range(num_envs)]
+    envs = [_make_env(name, seed, pt_rank * num_envs + i, **kwargs) for i in range(num_envs)]
     return SubprocVecEnv(envs) if concurrency else SimpleVecEnv(envs)

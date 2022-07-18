@@ -10,7 +10,7 @@ from idp_rl.utils import current_time, load_model, save_model, mkdir, to_np
 from idp_rl.logging import TrainLogger, EnvLogger
 from idp_rl.agents.storage import Storage
 from idp_rl.config import Config
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class BaseAgent:
     """ Base interface for building reinforcement learning agents.

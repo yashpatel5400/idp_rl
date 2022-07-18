@@ -15,7 +15,7 @@ import numpy as np
 from typing import List, Tuple, Dict
 
 from idp_rl.models.graph_components import MPNN
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class RTGNRecurrent(torch.nn.Module):
     """Actor-critic neural network using message passing neural network (MPNN) [1]_

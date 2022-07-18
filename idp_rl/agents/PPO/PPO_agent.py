@@ -11,7 +11,7 @@ import time
 from idp_rl.agents.base_ac_agent import BaseACAgent
 from idp_rl.utils import to_np
 from idp_rl.agents.storage import Storage
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class PPOAgent(BaseACAgent):
     """ Implements agent that uses the PPO (proximal policy optimization) [1]_ algorithm.

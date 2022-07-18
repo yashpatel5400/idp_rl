@@ -6,6 +6,7 @@ Different FF calculation/pruning behaviors based on the FF/simulator being used.
 """
 from idp_rl.utils import chem_utils
 
+import os
 import torch
 import numpy as np
 import openmm
@@ -121,7 +122,7 @@ class CharMMMixin:
 
         if torch.cuda.is_available():
             platform = openmm.Platform.getPlatformByName("CUDA")
-            prop = dict(CudaPrecision="mixed")
+            prop = dict(CudaPrecision="mixed", DeviceIndex=os.getenv("MP_RANK"))
             self.simulator = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform, prop)
         else:
             platform = openmm.Platform.getPlatformByName("CPU")

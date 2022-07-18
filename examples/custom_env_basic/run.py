@@ -13,7 +13,7 @@ from idp_rl.molecule_generation.generate_molecule_config import config_from_rdki
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # import the custom created environment to run the gym register script
 import custom_env

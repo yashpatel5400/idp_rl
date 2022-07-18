@@ -12,7 +12,7 @@ from idp_rl.agents.base_ac_agent_recurrent import BaseACAgentRecurrent
 from idp_rl.utils import to_np
 from idp_rl.agents.storage import Storage
 from idp_rl.config import Config
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class A2CRecurrentAgent(BaseACAgentRecurrent):

@@ -8,7 +8,7 @@ import logging
 import time
 from idp_rl.utils import current_time, load_model, save_model, mkdir, to_np
 from idp_rl.config import Config
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 from idp_rl.agents.base_agent import BaseAgent
 
@@ -71,9 +71,9 @@ class BaseACAgent(BaseAgent):
             storage.append(prediction)
             storage.append({
                 'states': states,
-                'terminals': torch.tensor(terminals).unsqueeze(-1).to(device),
-                'r': torch.tensor(rewards).unsqueeze(-1).to(device),
-                'm': torch.tensor(1 - terminals).unsqueeze(-1).to(device)
+                'terminals': torch.tensor(terminals).unsqueeze(-1).to(config.device),
+                'r': torch.tensor(rewards).unsqueeze(-1).to(config.device),
+                'm': torch.tensor(1 - terminals).unsqueeze(-1).to(config.device)
                 })
             states = next_states
 
@@ -98,7 +98,7 @@ class BaseACAgent(BaseAgent):
         storage = self.storage
 
         self.advantages, self.returns = [None] * config.rollout_length, [None] * config.rollout_length
-        adv = torch.zeros((self.num_workers, 1), dtype=torch.float64).to(device)
+        adv = torch.zeros((self.num_workers, 1), dtype=torch.float64).to(config.device)
         ret = self.prediction['v'].squeeze(0)
 
         for i in reversed(range(config.rollout_length)):

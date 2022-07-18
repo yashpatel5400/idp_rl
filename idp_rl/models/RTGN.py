@@ -11,7 +11,7 @@ import numpy as np
 from typing import List, Tuple, Dict
 
 from idp_rl.models.graph_components import MPNN
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class RTGN(torch.nn.Module):
     """Actor-critic neural network using message passing neural network (MPNN) [1]_
@@ -41,6 +41,8 @@ class RTGN(torch.nn.Module):
 
         self.actor = _RTGNActor(action_dim, hidden_dim, edge_dim=edge_dim, node_dim=node_dim)
         self.critic = _RTGNCritic(action_dim, hidden_dim, edge_dim=edge_dim, node_dim=node_dim)
+
+        self.device = None
 
     def forward(self, 
     obs: List[Tuple[Batch, List[List[int]]]], 
@@ -72,8 +74,11 @@ class RTGN(torch.nn.Module):
             data_list += b.to_data_list()
             nr_list.append(torch.LongTensor(nr))
 
+        if self.device is None:
+            self.device = next(self.parameters()).device # HACK: is this the best way to make it generic?
+        
         data = Batch.from_data_list(data_list)
-        data = data.to(device)
+        data = data.to(self.device)
         N = data.num_graphs
 
         so_far = 0
@@ -86,8 +91,8 @@ class RTGN(torch.nn.Module):
             torsion_batch_idx.extend([i]*int(nr_list[i].shape[0]))
             torsion_list_sizes += [nr_list[i].shape[0]]
 
-        nrs = torch.cat(nr_list).to(device)
-        torsion_batch_idx = torch.LongTensor(torsion_batch_idx).to(device)
+        nrs = torch.cat(nr_list).to(self.device)
+        torsion_batch_idx = torch.LongTensor(torsion_batch_idx).to(self.device)
         obs = (data, nrs, torsion_batch_idx, torsion_list_sizes)
 
         logits = self.actor(obs)
