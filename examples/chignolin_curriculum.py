@@ -66,13 +66,13 @@ def main(rank, world_size):
     config.tag = 'chignolin_curriculum'
 
     # Logging Parameters
-    config.save_interval = 20000
+    config.save_interval = 2000
     config.data_dir = 'data'
     config.use_tensorboard = True
 
     # Set up evaluation
     eval_mol_config = copy.deepcopy(mol_configs[-1]) # config_from_rdkit(mol, calc_normalizers=True, save_file=f'{mol_name}_eval')
-    config.eval_env = Task('GibbsScorePruningEnvCharmm-v0', num_envs=1, mol_config=eval_mol_config)
+    config.eval_env = Task('GibbsScorePruningEnv-v0', num_envs=1, mol_config=eval_mol_config)
     config.eval_interval = 20000
     config.eval_episodes = 2
 
@@ -107,7 +107,7 @@ def main(rank, world_size):
 
     total_envs = 24
     envs_per_node = (total_envs // world_size)
-    config.train_env = Task('GibbsScorePruningEnvCurriculumCharmm-v0', concurrency=True, num_envs=envs_per_node, seed=seed, pt_rank=rank, mol_configs=mol_configs)
+    config.train_env = Task('GibbsScorePruningEnvCurriculum-v0', concurrency=True, num_envs=envs_per_node, seed=seed, pt_rank=rank, mol_configs=mol_configs)
 
     torch.manual_seed(envs_per_node * rank + seed)
 
@@ -115,7 +115,7 @@ def main(rank, world_size):
     agent.run_steps()
 
 if __name__ == '__main__':
-    world_size = 6
+    world_size = 4
 
     mp.spawn(main,
         args=(world_size,),

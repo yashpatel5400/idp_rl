@@ -113,11 +113,11 @@ class CharMMMixin:
         openmm_system = openmm_psf.createSystem(openmm_toppar)
 
         # TODO: test GPU version simulator
-        integrator = openmm.VerletIntegrator(1.0)
+        integrator = openmm.LangevinMiddleIntegrator(300 * u.kelvin, 1 / u.picosecond, 0.004 * u.picoseconds)
 
         if torch.cuda.is_available():
             platform = openmm.Platform.getPlatformByName("CUDA")
-            prop = dict(CudaPrecision="mixed", DeviceIndex=os.getenv("MP_RANK"))
+            prop = dict(CudaPrecision="mixed", DeviceIndex=os.getenv("MP_RANK"))#, DisablePmeStream="true")
             self.simulator = app.Simulation(openmm_psf.topology, openmm_system, integrator, platform, prop)
         else:
             platform = openmm.Platform.getPlatformByName("CPU")

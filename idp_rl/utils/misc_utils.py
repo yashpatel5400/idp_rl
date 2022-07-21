@@ -48,5 +48,5 @@ def save_model(model: torch.nn.Module, filename: str) -> None:
 def load_model(model: torch.nn.Module, filename: str) -> None:
     """Loads model parameters of a PyTorch network from a file.
     """
-    state_dict = torch.load(filename)
+    state_dict = torch.load(filename, map_location='cuda:0')
     model.load_state_dict(state_dict)

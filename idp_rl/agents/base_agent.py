@@ -54,6 +54,8 @@ class BaseAgent:
         self.network = config.network
         self.optimizer = config.optimizer_fn(self.network.parameters())
 
+        # self.load('data/models/chignolin_curriculum_19-07-2022_12:16:15/20000.model')
+
     def run_steps(self) -> None:
         """ Trains the agent.
 
