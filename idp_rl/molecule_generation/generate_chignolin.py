@@ -8,7 +8,7 @@ def generate_chignolin(chunk) -> Chem.Mol:
     """Generates chignolin molecule.
     """
 
-    chignolin_pdb_fn = f"idp_rl/molecule_generation/chignolin/{chunk}.pdb"
+    chignolin_pdb_fn = f"../idp_rl/molecule_generation/chignolin/{chunk}.pdb"
     chignolin = Chem.rdmolfiles.MolFromPDBFile(chignolin_pdb_fn, removeHs=False)
     Chem.SanitizeMol(chignolin)
     return chignolin
