@@ -72,7 +72,7 @@ def main(rank, world_size):
 
     # Set up evaluation
     eval_mol_config = copy.deepcopy(mol_configs[-1]) # config_from_rdkit(mol, calc_normalizers=True, save_file=f'{mol_name}_eval')
-    config.eval_env = Task('GibbsScorePruningEnv-v0', num_envs=1, mol_config=eval_mol_config)
+    config.eval_env = Task('GibbsScorePruningEnvCharmm-v0', num_envs=1, mol_config=eval_mol_config)
     config.eval_interval = 20000
     config.eval_episodes = 2
 
@@ -107,7 +107,7 @@ def main(rank, world_size):
 
     total_envs = 24
     envs_per_node = (total_envs // world_size)
-    config.train_env = Task('GibbsScorePruningEnvCurriculum-v0', concurrency=True, num_envs=envs_per_node, seed=seed, pt_rank=rank, mol_configs=mol_configs)
+    config.train_env = Task('GibbsScorePruningEnvCurriculumCharmm-v0', concurrency=True, num_envs=envs_per_node, seed=seed, pt_rank=rank, mol_configs=mol_configs)
 
     torch.manual_seed(envs_per_node * rank + seed)
 
